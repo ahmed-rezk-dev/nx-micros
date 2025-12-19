@@ -16,6 +16,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@nx-micros/source"]
+    "customConditions": ["@nx-micros/source"],
+    "baseUrl": "."
   }
 }
