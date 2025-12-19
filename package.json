@@ -37,7 +37,7 @@
     "@vitest/coverage-v8": "^4.0.0",
     "@vitest/ui": "^4.0.0",
     "ajv": "^8.0.0",
-    "autoprefixer": "10.4.13",
+    "autoprefixer": "^10.4.23",
     "babel-jest": "^30.0.2",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
@@ -51,7 +51,7 @@
     "jiti": "2.4.2",
     "jsdom": "~22.1.0",
     "nx": "22.3.2",
-    "postcss": "8.4.38",
+    "postcss": "^8.5.6",
     "prettier": "~3.6.2",
     "react-refresh": "~0.14.0",
     "tailwindcss": "^4.1.18",
@@ -71,8 +71,14 @@
   ],
   "dependencies": {
     "@module-federation/enhanced": "^0.21.2",
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.562.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "6.29.0"
+    "react-router-dom": "6.29.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7"
   }
 }
