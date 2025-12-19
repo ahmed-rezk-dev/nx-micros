@@ -14,6 +14,11 @@ export default defineConfig(() => ({
       tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
     }),
   ],
+  resolve: {
+    alias: {
+      '@': path.resolve(import.meta.dirname, './src'),
+    },
+  },
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [],

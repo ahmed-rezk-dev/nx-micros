@@ -1,9 +1,4 @@
-@import 'tailwindcss';
+/* Import shared centralized styles from UI package */
+@import '@nx-micros/ui/globals.css';
 
-/* Tailwind CSS v4 Configuration */
-@theme {
-  /* Content paths for purging */
-  --content: './src/**/*.{js,ts,jsx,tsx,html}';
-}
-
-/* You can add global styles to this file, and also import other style files */
+/* Shell-specific styles can be added here */

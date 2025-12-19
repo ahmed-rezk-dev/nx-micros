@@ -7,6 +7,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
+    "./globals.css": "./dist/index.css",
     ".": {
       "@nx-micros/source": "./src/index.ts",
       "types": "./dist/index.d.ts",
