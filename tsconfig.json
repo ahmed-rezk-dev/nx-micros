@@ -8,6 +8,9 @@
     },
     {
       "path": "./apps/mfe/auth"
+    },
+    {
+      "path": "./packages/ui"
     }
   ]
 }
