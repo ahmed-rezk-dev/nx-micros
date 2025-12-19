@@ -89,7 +89,12 @@
 
 ### Component Architecture
 
-- Follow atomic design: atoms (buttons), molecules (forms), organisms (complex components)
+- Follow atomic design methodology: a hierarchical system inspired by chemistry that breaks interfaces into five levels:
+  - **Atoms**: Basic elements like buttons, icons, inputs (e.g., Button, Input from shadCN/ui)
+  - **Molecules**: Groups of atoms forming simple UI components (e.g., search forms, form fields)
+  - **Organisms**: Complex sections combining molecules (e.g., headers, navigation bars, product cards)
+  - **Templates**: Page layouts and wireframes without real content
+  - **Pages**: Final implementations with real content and data
 
 ### Git Commit Guidelines
 

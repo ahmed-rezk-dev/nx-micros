@@ -2,8 +2,13 @@ import './globals.css';
 export * from './lib/ui';
 export * from './lib/utils';
 
-// shadCN/ui Components
-export { Button } from './components/ui/button';
+// shadCN/ui Components - Organized by Atomic Design
+
+// Atoms (Basic building blocks)
+export { Button } from './components/atoms/button';
+export { Input } from './components/atoms/input';
+
+// Molecules (Combinations of atoms)
 export {
   Card,
   CardContent,
@@ -11,5 +16,4 @@ export {
   CardFooter,
   CardHeader,
   CardTitle,
-} from './components/ui/card';
-export { Input } from './components/ui/input';
+} from './components/molecules/card';
