@@ -1,0 +1,85 @@
+version: '3.8'
+services:
+  # Valkey for hot data (Redis-compatible)
+  valkey-hot:
+    image: valkey/valkey:8-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - valkey_hot_data:/data
+    command: valkey-server --appendonly yes
+    healthcheck:
+      test: ['CMD', 'valkey-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - nx-micros
+
+  # Valkey for sessions
+  valkey-session:
+    image: valkey/valkey:8-alpine
+    ports:
+      - '6380:6379'
+    volumes:
+      - valkey_session_data:/data
+    command: valkey-server --appendonly yes
+    healthcheck:
+      test: ['CMD', 'valkey-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - nx-micros
+
+  # PostgreSQL for cold data
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: nx_micros
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nx-micros
+
+  # LocalStack for SQS
+  localstack:
+    image: localstack/localstack:3
+    ports:
+      - '4566:4566'
+    environment:
+      SERVICES: sqs
+      DEBUG: 1
+      DOCKER_HOST: unix:///var/run/docker.sock
+      HOST_TMP_FOLDER: /tmp/localstack
+      SQS_ENDPOINT_STRATEGY: path
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - 'localstack_data:/tmp/localstack'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:4566/_localstack/health']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - nx-micros
+
+volumes:
+  valkey_hot_data:
+  valkey_session_data:
+  postgres_data:
+  localstack_data:
+
+networks:
+  nx-micros:
+    driver: bridge

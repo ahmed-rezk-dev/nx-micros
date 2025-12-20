@@ -20,6 +20,14 @@ export default {
       disableDotRule: true,
       htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
     },
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://localhost:3000',
+        secure: false,
+        changeOrigin: true,
+      },
+    ],
   },
   plugins: [
     new NxAppRspackPlugin({

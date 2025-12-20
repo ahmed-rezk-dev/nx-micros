@@ -11,6 +11,18 @@
     },
     {
       "path": "./packages/ui"
+    },
+    {
+      "path": "./apps/services-e2e"
+    },
+    {
+      "path": "./apps/services"
+    },
+    {
+      "path": "./libs/shared"
+    },
+    {
+      "path": "./libs/shared/shared-database"
     }
   ]
 }
