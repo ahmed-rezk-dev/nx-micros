@@ -1,106 +1,103 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-
-// Mock user data - will be replaced with database integration
-interface User {
-  id: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  avatarUrl?: string;
-  bio?: string;
-  role: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../entities/user.entity';
+import { CacheService } from '../cache/cache.service';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [
-    {
-      id: '1',
-      email: 'demo@nx-micros.com',
-      firstName: 'Demo',
-      lastName: 'User',
-      role: 'student',
-      isActive: true,
-      createdAt: new Date('2025-01-01'),
-      updatedAt: new Date('2025-01-01'),
-    },
-  ];
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    private cacheService: CacheService,
+  ) {}
 
-  async create(data: any): Promise<any> {
-    const user = {
-      id: Date.now().toString(),
-      ...data,
+  async create(data: any): Promise<User> {
+    const user = this.userRepository.create({
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      bio: data.bio,
       role: data.role || 'student',
       isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.users.push(user);
-    return user;
+      emailVerified: false,
+    });
+    return this.userRepository.save(user);
   }
 
   async findAll(
     options: { page?: number; limit?: number; search?: string } = {},
-  ): Promise<any> {
+  ): Promise<{
+    data: User[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  }> {
     const { page = 1, limit = 10, search } = options;
-    let filteredUsers = this.users;
+
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
 
     if (search) {
-      filteredUsers = this.users.filter(
-        (user) =>
-          user.email.toLowerCase().includes(search.toLowerCase()) ||
-          user.firstName?.toLowerCase().includes(search.toLowerCase()) ||
-          user.lastName?.toLowerCase().includes(search.toLowerCase()),
+      queryBuilder.where(
+        'user.email ILIKE :search OR user.firstName ILIKE :search OR user.lastName ILIKE :search',
+        { search: `%${search}%` },
       );
     }
 
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+    const [data, total] = await queryBuilder
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    const totalPages = Math.ceil(total / limit);
 
     return {
-      data: paginatedUsers,
-      total: filteredUsers.length,
+      data,
+      total,
       page,
       limit,
-      totalPages: Math.ceil(filteredUsers.length / limit),
-      hasNext: endIndex < filteredUsers.length,
+      totalPages,
+      hasNext: page * limit < total,
       hasPrev: page > 1,
     };
   }
 
-  async findOne(id: string): Promise<any> {
-    const user = this.users.find((u) => u.id === id);
+  async findOne(id: string): Promise<User> {
+    // Try to get from cache first
+    const cacheKey = `user:${id}`;
+    const cachedUser = await this.cacheService.get<User>(cacheKey);
+    if (cachedUser) {
+      return cachedUser;
+    }
+
+    // Get from database
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    // Cache the user for 1 hour
+    await this.cacheService.set(cacheKey, user, 3600);
     return user;
   }
 
-  async update(id: string, data: any): Promise<any> {
-    const userIndex = this.users.findIndex((u) => u.id === id);
-    if (userIndex === -1) {
-      throw new NotFoundException('User not found');
-    }
-
-    const updatedUser = {
-      ...this.users[userIndex],
-      ...data,
-      updatedAt: new Date(),
-    };
-    this.users[userIndex] = updatedUser;
-    return updatedUser;
+  async update(id: string, data: any): Promise<User> {
+    await this.userRepository.update(id, data);
+    // Invalidate cache
+    await this.cacheService.delete(`user:${id}`);
+    return this.findOne(id);
   }
 
   async remove(id: string): Promise<void> {
-    const userIndex = this.users.findIndex((u) => u.id === id);
-    if (userIndex === -1) {
+    const result = await this.userRepository.delete(id);
+    if (result.affected === 0) {
       throw new NotFoundException('User not found');
     }
-    this.users.splice(userIndex, 1);
+    // Invalidate cache
+    await this.cacheService.delete(`user:${id}`);
   }
 
   async getProfile(id: string): Promise<any> {

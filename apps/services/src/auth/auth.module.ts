@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
-import { User } from '../../../../libs/shared/shared-database/src/entities/user.entity';
-import { ValkeyModule } from '../../../../libs/shared/shared-cache/src/valkey/valkey.module';
+import { User } from '../entities/user.entity';
+import { CacheModule } from '../cache/cache.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { ValkeyModule } from '../../../../libs/shared/shared-cache/src/valkey/va
       secret: process.env.JWT_SECRET || 'development-secret-key',
       signOptions: { expiresIn: '7d' },
     }),
-    ValkeyModule,
+    CacheModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

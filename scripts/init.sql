@@ -1,11 +1,5 @@
 -- Database initialization script for E-Learning Platform
 
--- Create database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS nx_micros;
-
--- Use the database
-\c nx_micros;
-
 -- Create extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";

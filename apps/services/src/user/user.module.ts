@@ -1,16 +1,14 @@
-import { Module, Logger } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { User } from '../entities/user.entity';
+import { CacheModule } from '../cache/cache.module';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([User]), CacheModule],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
 })
-export class UserModule {
-  private readonly logger = new Logger(UserModule.name);
-
-  constructor() {
-    this.logger.log('UserModule initialized');
-  }
-}
+export class UserModule {}

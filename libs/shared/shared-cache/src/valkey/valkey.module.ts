@@ -1,5 +1,5 @@
 import { Module, Global } from '@nestjs/common';
-import { ValkeyHotService, ValkeySessionService } from './index.js';
+import { ValkeyHotService, ValkeySessionService } from './index';
 
 export interface ValkeyConfig {
   hot: {
