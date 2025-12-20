@@ -97,9 +97,10 @@ export function App() {
   const loadCategories = async () => {
     try {
       const response = await apiClient.get<string[]>('/courses/categories');
-      setCategories(response);
+      setCategories(Array.isArray(response) ? response : []);
     } catch (error) {
       console.error('Failed to load categories:', error);
+      setCategories([]);
     }
   };
 
@@ -204,11 +205,12 @@ export function App() {
               className="px-3 py-2 border border-input bg-background rounded-md text-sm"
             >
               <option value="">All Categories</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
+              {Array.isArray(categories) &&
+                categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
             </select>
 
             <select
