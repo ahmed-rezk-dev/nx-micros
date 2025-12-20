@@ -2,6 +2,8 @@
 
 @plugin 'tailwindcss-animate';
 
+@source './';
+
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
@@ -60,7 +62,7 @@
   }
 }
 
-@theme inline {
+@theme {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
