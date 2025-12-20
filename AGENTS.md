@@ -1,103 +1,28 @@
-# AGENTS.md - Development Guidelines for Nx Microfrontends
-
-## Package Management
-
-- **Root package.json**: Serves as the main center shared package manager for the entire monorepo
-- **Workspaces**: Configured with npm workspaces for `packages/*`, `apps/*`, and `apps/mfe/*` directories
-- **Dependencies**: All shared dependencies (React, React Router, Module Federation, etc.) are managed centrally
+# AGENTS.md - Nx Microfrontends Development Guidelines
 
 ## Build/Lint/Test Commands
 
-### Individual Project Commands
-
-- **Build**: `nx build <project-name>` (e.g., `nx build shell`, `nx build auth`)
-- **Test**: `nx test <project-name>` (e.g., `nx test shell`)
-- **Lint**: `nx lint <project-name>` (e.g., `nx lint shell`)
-- **Typecheck**: `nx typecheck <project-name>` (e.g., `nx typecheck shell`)
+- **Build**: `nx build <project-name>` (e.g., `nx build shell`)
+- **Test**: `nx test <project-name>` (e.g., `nx test ui`)
+- **Single test**: `nx test <project-name> --testPathPattern=<filename>`
+- **Lint**: `nx lint <project-name>` (e.g., `nx lint ui`)
+- **Typecheck**: `nx typecheck <project-name>` (e.g., `nx typecheck ui`)
 - **Serve**: `nx serve <project-name>` (shell: port 4200, auth: port 4201)
-
-### Run Single Test
-
-- Run all tests for a project: `nx test <project-name>`
-- Run specific test file: `nx test <project-name> --testPathPattern=<filename>`
-- Run tests in watch mode: `nx test <project-name> --watch`
-
-### Multiple Targets
-
-- Run build, test, and lint together: `nx run-many -p <project-name> -t build test lint typecheck`
-
-### Post-Change Verification
-
-- Always run `nx typecheck ui && nx lint ui && nx test ui` after making changes to ensure code quality
-
-### Documentation Maintenance
-
-- Always keep README.md up to date with guidelines, structure, onboarding instructions, scripts, and documentation
+- **Post-change verification**: Run `nx typecheck ui && nx lint ui && nx test ui`
 
 ## Code Style Guidelines
 
-### Formatting
+- **Formatting**: Prettier with single quotes, auto-format with `nx format:write`
+- **TypeScript**: Strict mode enabled, NodeNext modules, no unused locals/implicit returns
+- **Imports**: `import * as React from 'react'`, named imports, group by React/third-party/local
+- **Naming**: Functions camelCase, Components PascalCase, files kebab-case, tests `.spec.tsx`
+- **Error handling**: TypeScript strict mode, proper async error boundaries
+- **Module boundaries**: Respect `@nx/enforce-module-boundaries` rules
+- **Testing**: React Testing Library with Jest, wrap routing in `BrowserRouter`
+- **Architecture**: Microfrontends with Module Federation, React 19, Tailwind CSS, Rspack
+- **Components**: Atomic design (atoms → molecules → organisms → templates → pages)
 
-- Use Prettier with single quotes (`singleQuote: true`)
-- Auto-format with: `nx format:write`
+## Git Guidelines
 
-### TypeScript Configuration
-
-- **Strict mode**: Enabled with comprehensive type checking
-- **Unused variables**: `noUnusedLocals` enabled
-- **Implicit returns**: `noImplicitReturns` enabled
-- **Fallthrough cases**: `noFallthroughCasesInSwitch` enabled
-- **Module resolution**: Uses NodeNext for modern ESM support
-
-### Import Conventions
-
-- React: `import * as React from 'react'`
-- Named imports for other libraries
-- Group imports: React/React DOM, third-party libraries, local imports
-
-### Naming Conventions
-
-- **Functions**: camelCase (e.g., `export function App()`)
-- **Components**: PascalCase (e.g., `NxWelcome`)
-- **Files**: kebab-case for filenames (e.g., `app.tsx`, `nx-welcome.tsx`)
-- **Test files**: `.spec.tsx` suffix
-
-### Error Handling
-
-- Leverage TypeScript strict mode for compile-time error detection
-- Use proper typing to prevent runtime errors
-- Handle async operations with proper error boundaries
-
-### Module Boundaries
-
-- Nx enforces `@nx/enforce-module-boundaries` - respect project dependencies
-- Import only from allowed sources per project configuration
-
-### Testing Patterns
-
-- Use React Testing Library with Jest
-- Wrap routing components in `BrowserRouter` for tests
-- Test files: `<component>.spec.tsx`
-- Use descriptive test names and assertions
-
-### Architecture Notes
-
-- Microfrontends using Module Federation
-- React 19 with React Router DOM
-- Tailwind CSS for styling
-- Rspack bundler
-
-### Component Architecture
-
-- Follow atomic design methodology: a hierarchical system inspired by chemistry that breaks interfaces into five levels:
-  - **Atoms**: Basic elements like buttons, icons, inputs (e.g., Button, Input from shadCN/ui)
-  - **Molecules**: Groups of atoms forming simple UI components (e.g., search forms, form fields)
-  - **Organisms**: Complex sections combining molecules (e.g., headers, navigation bars, product cards)
-  - **Templates**: Page layouts and wireframes without real content
-  - **Pages**: Final implementations with real content and data
-
-### Git Commit Guidelines
-
-- Never commit without fixing all errors
-- Never commit without confirming the commit message with the user: provide options yes, no, edit</content>
+- Never commit without fixing all errors or confirming commit message with user</content>
   <parameter name="filePath">/Users/ahmed.rezk/exercising/nx-micros/AGENTS.md
