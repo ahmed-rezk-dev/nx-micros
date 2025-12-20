@@ -23,6 +23,36 @@
     },
     {
       "path": "./libs/shared/shared-database"
+    },
+    {
+      "path": "./dashboard-e2e"
+    },
+    {
+      "path": "./dashboard"
+    },
+    {
+      "path": "./courses-e2e"
+    },
+    {
+      "path": "./courses"
+    },
+    {
+      "path": "./learning-e2e"
+    },
+    {
+      "path": "./learning"
+    },
+    {
+      "path": "./instructor-e2e"
+    },
+    {
+      "path": "./instructor"
+    },
+    {
+      "path": "./account-e2e"
+    },
+    {
+      "path": "./account"
     }
   ]
 }

@@ -22,6 +22,11 @@
     }
   },
   "devDependencies": {
-    "auth": "*"
+    "auth": "*",
+    "dashboard": "*",
+    "courses": "*",
+    "learning": "*",
+    "instructor": "*",
+    "account": "*"
   }
 }

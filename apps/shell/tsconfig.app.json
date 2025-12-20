@@ -37,6 +37,21 @@
       "path": "../../packages/ui/tsconfig.lib.json"
     },
     {
+      "path": "../../account/tsconfig.app.json"
+    },
+    {
+      "path": "../../instructor/tsconfig.app.json"
+    },
+    {
+      "path": "../../learning/tsconfig.app.json"
+    },
+    {
+      "path": "../../courses/tsconfig.app.json"
+    },
+    {
+      "path": "../../dashboard/tsconfig.app.json"
+    },
+    {
       "path": "../mfe/auth/tsconfig.app.json"
     }
   ]

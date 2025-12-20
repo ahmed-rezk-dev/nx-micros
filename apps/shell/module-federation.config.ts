@@ -14,7 +14,14 @@ const config: ModuleFederationConfig = {
    * declare module 'my-external-remote';
    *
    */
-  remotes: ['auth'],
+  remotes: [
+    'auth',
+    'dashboard',
+    'courses',
+    'learning',
+    'instructor',
+    'account',
+  ],
 };
 
 /**
