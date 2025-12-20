@@ -9,7 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from '../entities/user.entity';
 import { SessionService } from '../cache/session.service';
-import { SqsService } from '../queue/sqs.service';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +17,6 @@ export class AuthService {
     private userRepository: Repository<User>,
     private jwtService: JwtService,
     private sessionService: SessionService,
-    private sqsService: SqsService,
   ) {}
 
   async register(
@@ -62,14 +60,14 @@ export class AuthService {
       registrationTime: new Date().toISOString(),
     });
 
-    // Send user registration event
-    await this.sqsService.sendMessage('user-events', {
-      eventType: 'user.registered',
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-      timestamp: new Date().toISOString(),
-    });
+    // TODO: Send user registration event
+    // await this.sqsService.sendMessage('user-events', {
+    //   eventType: 'user.registered',
+    //   userId: user.id,
+    //   email: user.email,
+    //   role: user.role,
+    //   timestamp: new Date().toISOString(),
+    // });
 
     return { user, token, sessionId };
   }
@@ -108,15 +106,15 @@ export class AuthService {
       loginTime: new Date().toISOString(),
     });
 
-    // Send user login event
-    await this.sqsService.sendMessage('user-events', {
-      eventType: 'user.logged_in',
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-      sessionId,
-      timestamp: new Date().toISOString(),
-    });
+    // TODO: Send user login event
+    // await this.sqsService.sendMessage('user-events', {
+    //   eventType: 'user.logged_in',
+    //   userId: user.id,
+    //   email: user.email,
+    //   role: user.role,
+    //   sessionId,
+    //   timestamp: new Date().toISOString(),
+    // });
 
     return { user, token, sessionId };
   }

@@ -9,7 +9,9 @@ import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
 import { CacheModule } from '../cache/cache.module';
 import { QueueModule } from '../queue/queue.module';
+import { CourseModule } from '../course/course.module';
 import { User } from '../entities/user.entity';
+import { Course } from '../entities/course.entity';
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { User } from '../entities/user.entity';
       username: process.env.DATABASE_USER || 'postgres',
       password: process.env.DATABASE_PASSWORD || 'password',
       database: process.env.DATABASE_NAME || 'nx_micros',
-      entities: [User],
+      entities: [User, Course],
       synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
       logging: process.env.DATABASE_LOGGING === 'true',
     }),
@@ -38,6 +40,7 @@ import { User } from '../entities/user.entity';
     // Feature modules
     UserModule,
     AuthModule,
+    CourseModule,
     CacheModule,
     QueueModule,
   ],
