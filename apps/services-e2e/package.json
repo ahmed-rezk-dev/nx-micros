@@ -1,11 +1,11 @@
 {
-  "name": "@nx-micros/analytics-service-e2e",
+  "name": "@nx-micros/user-service-e2e",
   "version": "0.0.1",
   "private": true,
   "nx": {
-    "name": "analytics-service-e2e",
+    "name": "user-service-e2e",
     "implicitDependencies": [
-      "analytics-service"
+      "user-service"
     ],
     "targets": {
       "e2e": {
@@ -18,8 +18,8 @@
           "passWithNoTests": true
         },
         "dependsOn": [
-          "analytics-service:build",
-          "analytics-service:serve"
+          "user-service:build",
+          "user-service:serve"
         ]
       }
     }

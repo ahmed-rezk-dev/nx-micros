@@ -58,6 +58,7 @@
         "apps/services-e2e/**/*",
         "apps/services-e2e/**/*",
         "apps/services-e2e/**/*",
+        "apps/services-e2e/**/*",
         "apps/services-e2e/**/*"
       ]
     },
