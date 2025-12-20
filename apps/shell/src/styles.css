@@ -1,4 +1,0 @@
-/* Import shared centralized styles from UI package */
-@import '@nx-micros/ui/globals.css';
-
-/* Shell-specific styles can be added here */

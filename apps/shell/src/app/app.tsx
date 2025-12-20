@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@nx-micros/ui';
+import '@nx-micros/ui/globals.css';
 
 const Auth = React.lazy(() => import('auth/Module'));
 
