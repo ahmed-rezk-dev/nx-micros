@@ -75,3 +75,8 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isLoading: loading });
   },
 }));
+
+// Custom hook for safe cart store usage
+export const useCart = () => {
+  return useCartStore();
+};

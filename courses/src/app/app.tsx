@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import NxWelcome from './nx-welcome';
 import {
-  useAuthStore,
-  useCartStore,
-  useUIStore,
+  useAuth,
+  useCart,
+  useUI,
   apiClient,
   Card,
   CardContent,
@@ -43,9 +43,9 @@ interface CourseFilters {
 }
 
 export function App() {
-  const { isAuthenticated } = useAuthStore();
-  const { items: cartItems, addCourse, hasCourse } = useCartStore();
-  const { setLoading, isLoading } = useUIStore();
+  const { isAuthenticated } = useAuth();
+  const { items: cartItems, addCourse, hasCourse } = useCart();
+  const { setLoading, isLoading } = useUI();
 
   // Fallback toast function since context might not be available in MFE
   const addToast = (toast: any) => {

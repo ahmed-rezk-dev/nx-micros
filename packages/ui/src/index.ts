@@ -3,13 +3,13 @@ export * from './lib/ui';
 export * from './lib/utils';
 
 // Zustand Stores
-export { useAuthStore } from './lib/stores/auth.store';
+export { useAuthStore, useAuth } from './lib/stores/auth.store';
 export type { User } from './lib/stores/auth.store';
 
-export { useCartStore } from './lib/stores/cart.store';
+export { useCartStore, useCart } from './lib/stores/cart.store';
 export type { Course } from './lib/stores/cart.store';
 
-export { useUIStore } from './lib/stores/ui.store';
+export { useUIStore, useUI } from './lib/stores/ui.store';
 
 // API Client & Hooks
 export { apiClient } from './lib/api';
