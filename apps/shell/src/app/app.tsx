@@ -1,5 +1,4 @@
 import * as React from 'react';
-import NxWelcome from './nx-welcome';
 import { Link, Route, Routes, Navigate } from 'react-router-dom';
 import { Button } from '@nx-micros/ui';
 import {
@@ -157,7 +156,6 @@ export function App() {
                           </div>
                         </CardContent>
                       </Card>
-                      <NxWelcome title="shell" />
                     </div>
                   }
                 />

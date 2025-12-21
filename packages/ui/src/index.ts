@@ -11,6 +11,7 @@ export * from './lib/utils';
 // Atoms (Basic building blocks)
 export { Button } from './components/atoms/button';
 export { Input } from './components/atoms/input';
+export { Loading } from './components/atoms/loading';
 
 // Molecules (Combinations of atoms)
 export {

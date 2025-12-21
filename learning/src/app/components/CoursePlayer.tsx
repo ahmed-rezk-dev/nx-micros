@@ -127,23 +127,25 @@ export default function CoursePlayer() {
 
           {/* Video Player Placeholder */}
           {currentLesson.type === 'video' && (
-            <div className="bg-black rounded-lg aspect-video mb-6 flex items-center justify-center">
-              <div className="text-white text-center">
-                <div className="text-6xl mb-4">🎥</div>
-                <p>Video Player</p>
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg aspect-video mb-6 flex items-center justify-center relative overflow-hidden">
+              <div className="text-white text-center z-10">
+                <div className="text-6xl mb-4 animate-bounce">🎥</div>
+                <p className="font-semibold text-lg mb-2">Video Lesson</p>
                 <p className="text-sm opacity-75">
                   Duration: {Math.floor(currentLesson.duration / 60)}:
                   {(currentLesson.duration % 60).toString().padStart(2, '0')}
                 </p>
               </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 animate-pulse"></div>
             </div>
           )}
 
           {/* Text Content */}
           {currentLesson.type === 'text' && (
             <div className="prose max-w-none mb-6">
-              <div className="bg-gray-50 p-6 rounded-lg">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-lg shadow-sm border border-gray-200">
                 <div
+                  className="text-gray-800 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: currentLesson.content }}
                 />
               </div>
@@ -152,12 +154,19 @@ export default function CoursePlayer() {
 
           {/* Quiz Placeholder */}
           {currentLesson.type === 'quiz' && (
-            <div className="bg-blue-50 p-6 rounded-lg mb-6">
-              <h4 className="text-lg font-semibold mb-4">Quiz</h4>
-              <p className="text-gray-600 mb-4">
-                Interactive quiz will be implemented here.
-              </p>
-              <div className="text-center text-4xl">📝</div>
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-lg mb-6 border-2 border-dashed border-blue-200">
+              <div className="text-center">
+                <div className="text-6xl mb-4 animate-pulse">📝</div>
+                <h4 className="text-xl font-semibold mb-2 text-blue-900">
+                  Interactive Quiz
+                </h4>
+                <p className="text-gray-600 mb-4">
+                  Test your knowledge with this lesson quiz.
+                </p>
+                <div className="bg-white rounded-lg p-4 shadow-sm inline-block">
+                  <p className="text-sm text-gray-500">Coming Soon</p>
+                </div>
+              </div>
             </div>
           )}
 

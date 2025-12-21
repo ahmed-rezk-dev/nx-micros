@@ -1,0 +1,39 @@
+
+ NX   Running target serve for project shell and 8 tasks it depends on:
+
+
+
+> nx run @nx-micros/ui:typecheck  [existing outputs match the cache, left as is]
+
+
+> nx run courses:typecheck  [existing outputs match the cache, left as is]
+
+
+> nx run instructor:typecheck  [existing outputs match the cache, left as is]
+
+
+> nx run account:typecheck  [existing outputs match the cache, left as is]
+
+
+> nx run learning:typecheck  [existing outputs match the cache, left as is]
+
+
+> nx run auth:typecheck  [existing outputs match the cache, left as is]
+
+
+> nx run dashboard:typecheck  [existing outputs match the cache, left as is]
+
+
+> nx run shell:typecheck  [existing outputs match the cache, left as is]
+
+> tsc --build --emitDeclarationOnly
+
+Waiting for shell:serve in another nx process
+Task "shell:serve" is continuous but exited with code 0
+
+
+
+ NX   Successfully ran target serve for project shell and 8 tasks it depends on
+
+Nx read the output from the cache instead of running the command for 8 out of 9 tasks.
+

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import NxWelcome from './nx-welcome';
 import {
   Card,
   CardContent,
@@ -208,9 +207,6 @@ export function App() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Microfrontend Info */}
-        <NxWelcome title="Dashboard Microfrontend" />
       </div>
     </div>
   );

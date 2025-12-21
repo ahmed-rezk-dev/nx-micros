@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import NxWelcome from './nx-welcome';
 import { Input } from '@nx-micros/ui';
 import { useAuth } from 'shell/stores';
 
@@ -137,11 +136,6 @@ export function App() {
         {/* Course Grid */}
 
         {/* Cart Summary */}
-
-        {/* Microfrontend Info */}
-        <div className="mt-12 pt-8 border-t">
-          <NxWelcome title="Courses Microfrontend" />
-        </div>
       </div>
     </div>
   );

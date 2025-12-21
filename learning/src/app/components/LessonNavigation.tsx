@@ -86,11 +86,11 @@ export default function LessonNavigation() {
 
     switch (type) {
       case 'video':
-        return '🎥';
+        return '🎬';
       case 'text':
-        return '📄';
+        return '📖';
       case 'quiz':
-        return '📝';
+        return '🧠';
       default:
         return '📚';
     }
@@ -155,9 +155,9 @@ export default function LessonNavigation() {
             {course.lessons.map((lesson) => (
               <div
                 key={lesson.id}
-                className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
+                className={`p-4 cursor-pointer hover:bg-gray-50 hover:shadow-sm transition-all duration-200 ${
                   lessonId === lesson.id
-                    ? 'bg-blue-50 border-l-4 border-blue-500'
+                    ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 shadow-sm'
                     : ''
                 }`}
                 onClick={() => handleLessonClick(lesson)}

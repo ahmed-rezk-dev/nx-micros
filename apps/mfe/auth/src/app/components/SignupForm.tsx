@@ -12,6 +12,7 @@ import {
   Input,
   Alert,
   AlertDescription,
+  Loading,
 } from '@nx-micros/ui';
 import { useAuth } from 'shell/stores';
 
@@ -186,8 +187,20 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             )}
           </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Creating account...' : 'Create Account'}
+          <Button
+            type="submit"
+            className="w-full"
+            variant={isLoading ? 'loading' : 'default'}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Loading size="sm" />
+                Creating account...
+              </>
+            ) : (
+              'Create Account'
+            )}
           </Button>
         </form>
 
