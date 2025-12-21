@@ -81,7 +81,7 @@ export const useUIStore = create<UIState>((set, get) => ({
 }));
 
 // Initialize theme from localStorage
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
   const savedTheme = localStorage.getItem('ui-theme') as 'light' | 'dark';
   if (savedTheme) {
     useUIStore.getState().setTheme(savedTheme);

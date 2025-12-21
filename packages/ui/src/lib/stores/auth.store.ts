@@ -138,6 +138,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 }));
 
 // Initialize auth state on app start
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
   useAuthStore.getState().initialize();
 }

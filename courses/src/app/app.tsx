@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import NxWelcome from './nx-welcome';
 import {
-  apiClient,
   useAuthStore,
   useCartStore,
   useUIStore,
+  apiClient,
   Card,
   CardContent,
   CardDescription,
@@ -13,7 +13,6 @@ import {
   Button,
   Input,
 } from '@nx-micros/ui';
-import { useToast } from '@nx-micros/ui';
 
 interface Course {
   id: string;
@@ -47,7 +46,12 @@ export function App() {
   const { isAuthenticated } = useAuthStore();
   const { items: cartItems, addCourse, hasCourse } = useCartStore();
   const { setLoading, isLoading } = useUIStore();
-  const { addToast } = useToast();
+
+  // Fallback toast function since context might not be available in MFE
+  const addToast = (toast: any) => {
+    console.log('Toast:', toast.title, toast.description);
+    // In a real implementation, this would communicate with the shell app
+  };
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
