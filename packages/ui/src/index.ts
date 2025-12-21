@@ -2,19 +2,9 @@ import './globals.css';
 export * from './lib/ui';
 export * from './lib/utils';
 
-// Zustand Stores
-export { useAuthStore, useAuth } from './lib/stores/auth.store';
-export type { User } from './lib/stores/auth.store';
+// Zustand Stores are now provided by the shell remote
 
-export { useCartStore, useCart } from './lib/stores/cart.store';
-export type { Course } from './lib/stores/cart.store';
-
-export { useUIStore, useUI } from './lib/stores/ui.store';
-
-// API Client & Hooks
-export { apiClient } from './lib/api';
-export { useForm, useController, useFormContext } from 'react-hook-form';
-export { zodResolver } from '@hookform/resolvers/zod';
+// API Client & Hooks are now provided by the shell remote
 
 // shadCN/ui Components - Organized by Atomic Design
 
@@ -31,6 +21,12 @@ export {
   CardHeader,
   CardTitle,
 } from './components/molecules/card';
+
+export {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+} from './components/molecules/alert';
 
 // Organisms (Complex components)
 export { default as ErrorBoundary } from './components/organisms/ErrorBoundary';

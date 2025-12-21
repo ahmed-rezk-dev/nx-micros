@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import NxWelcome from './nx-welcome';
 import {
-  useAuthStore,
-  useUIStore,
   Card,
   CardContent,
   CardDescription,
@@ -10,6 +8,7 @@ import {
   CardTitle,
   Button,
 } from '@nx-micros/ui';
+import { useAuthStore, useUIStore } from 'shell/stores';
 
 interface DashboardStats {
   totalCourses: number;

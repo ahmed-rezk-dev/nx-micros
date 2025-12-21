@@ -1,38 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import NxWelcome from './nx-welcome';
-import {
-  useAuth,
-  useCart,
-  useUI,
-  apiClient,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button,
-  Input,
-} from '@nx-micros/ui';
+import { Input } from '@nx-micros/ui';
+import { useAuth } from 'shell/stores';
 
-interface Course {
-  id: string;
-  title: string;
-  description?: string;
-  shortDescription?: string;
-  category?: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
-  price?: number;
-  currency?: string;
-  rating?: number;
-  totalStudents?: number;
-  thumbnailUrl?: string;
-  instructor?: {
-    id: string;
-    firstName?: string;
-    lastName?: string;
-  };
-  isPublished: boolean;
-}
+// Type assertion for apiClient to fix TypeScript issues
+// const typedApiClient = apiClient as {
+//   get: <T>(url: string) => Promise<T>;
+//   post: <T>(url: string, data?: any) => Promise<T>;
+// };
 
 interface CourseFilters {
   category?: string;
@@ -44,101 +19,30 @@ interface CourseFilters {
 
 export function App() {
   const { isAuthenticated } = useAuth();
-  const { items: cartItems, addCourse, hasCourse } = useCart();
-  const { setLoading, isLoading } = useUI();
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log('App isAuthenticated:', isAuthenticated); // __AUTO_GENERATED_PRINT_VAR_END__
+  // const { items: cartItems, addCourse, hasCourse } = useCart();
+  // const { setLoading, isLoading } = useUI();
 
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories] = useState<string[]>([]);
   const [filters, setFilters] = useState<CourseFilters>({
     sortBy: 'title',
     sortOrder: 'ASC',
   });
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    loadCourses();
-    loadCategories();
-  }, [filters]);
-
-  const loadCourses = async () => {
-    try {
-      setLoading('courses', true);
-
-      const queryParams = new URLSearchParams();
-      if (filters.category) queryParams.append('category', filters.category);
-      if (filters.level) queryParams.append('level', filters.level);
-      if (filters.search) queryParams.append('search', filters.search);
-      if (filters.sortBy) queryParams.append('sortBy', filters.sortBy);
-      if (filters.sortOrder) queryParams.append('sortOrder', filters.sortOrder);
-
-      const response = await apiClient.get<{
-        data: Course[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
-      }>(`/courses?${queryParams.toString()}`);
-
-      setCourses(response.data);
-    } catch (error) {
-      console.error('Failed to load courses:', error);
-      // Fallback to mock data for demo
-      setCourses([
-        {
-          id: '1',
-          title: 'React Fundamentals',
-          shortDescription: 'Learn the basics of React development',
-          category: 'Web Development',
-          level: 'beginner',
-          price: 49.99,
-          currency: 'USD',
-          rating: 4.8,
-          totalStudents: 1234,
-          isPublished: true,
-          instructor: { id: '1', firstName: 'John', lastName: 'Doe' },
-        },
-        {
-          id: '2',
-          title: 'Python for Data Science',
-          shortDescription: 'Master Python for data analysis and ML',
-          category: 'Data Science',
-          level: 'intermediate',
-          price: 79.99,
-          currency: 'USD',
-          rating: 4.9,
-          totalStudents: 856,
-          isPublished: true,
-          instructor: { id: '2', firstName: 'Jane', lastName: 'Smith' },
-        },
-        {
-          id: '3',
-          title: 'Mobile App Development',
-          shortDescription: 'Build cross-platform mobile apps',
-          category: 'Mobile Development',
-          level: 'beginner',
-          price: 119.99,
-          currency: 'USD',
-          rating: 4.7,
-          totalStudents: 654,
-          isPublished: true,
-          instructor: { id: '3', firstName: 'Mike', lastName: 'Johnson' },
-        },
-      ]);
-    } finally {
-      setLoading('courses', false);
-    }
-  };
-
-  const loadCategories = async () => {
-    try {
-      const response = await apiClient.get<string[]>('/courses/categories');
-      setCategories(Array.isArray(response) ? response : []);
-    } catch (error) {
-      console.error('Failed to load categories:', error);
-      // Fallback categories
-      setCategories(['Web Development', 'Data Science', 'Mobile Development']);
-    }
-  };
+  // const loadCategories = async () => {
+  //   try {
+  //     const response = await typedApiClient.get<string[]>(
+  //       '/courses/categories',
+  //     );
+  //     setCategories(Array.isArray(response) ? response : []);
+  //   } catch (error) {
+  //     console.error('Failed to load categories:', error);
+  //     // Fallback categories
+  //     setCategories(['Web Development', 'Data Science', 'Mobile Development']);
+  //   }
+  // };
 
   const handleSearch = () => {
     setFilters((prev) => ({
@@ -152,38 +56,6 @@ export function App() {
       ...prev,
       [key]: value || undefined,
     }));
-  };
-
-  const handleEnroll = async (course: Course) => {
-    if (!isAuthenticated) {
-      console.log('Authentication required for enrollment');
-      return;
-    }
-
-    if (hasCourse(course.id)) {
-      console.log('Already enrolled in this course');
-      return;
-    }
-
-    try {
-      addCourse(course);
-      console.log(`${course.title} added to cart`);
-    } catch (error) {
-      console.error('Failed to enroll in course:', error);
-    }
-  };
-
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case 'beginner':
-        return 'bg-green-100 text-green-800';
-      case 'intermediate':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'advanced':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
   };
 
   return (
@@ -212,9 +84,6 @@ export function App() {
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-            <Button onClick={handleSearch} disabled={isLoading('courses')}>
-              Search
-            </Button>
           </div>
 
           <div className="flex flex-wrap gap-4">
@@ -265,140 +134,9 @@ export function App() {
           </div>
         </div>
 
-        {/* Loading State */}
-        {isLoading('courses') && (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading courses...</p>
-          </div>
-        )}
-
         {/* Course Grid */}
-        {!isLoading('courses') && (
-          <>
-            {courses.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground text-lg">
-                  No courses found matching your criteria.
-                </p>
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onClick={() =>
-                    setFilters({ sortBy: 'title', sortOrder: 'ASC' })
-                  }
-                >
-                  Clear Filters
-                </Button>
-              </div>
-            ) : (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {courses.map((course) => (
-                  <Card
-                    key={course.id}
-                    className="overflow-hidden hover:shadow-lg transition-shadow"
-                  >
-                    {/* Course Thumbnail */}
-                    <div className="aspect-video bg-muted relative">
-                      {course.thumbnailUrl ? (
-                        <img
-                          src={course.thumbnailUrl}
-                          alt={course.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                          <div className="text-4xl opacity-50">📚</div>
-                        </div>
-                      )}
-                      <div className="absolute top-2 right-2">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(course.level)}`}
-                        >
-                          {course.level}
-                        </span>
-                      </div>
-                    </div>
-
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg line-clamp-2">
-                        {course.title}
-                      </CardTitle>
-                      <CardDescription className="line-clamp-2">
-                        {course.shortDescription || course.description}
-                      </CardDescription>
-                    </CardHeader>
-
-                    <CardContent className="space-y-4">
-                      {/* Course Meta */}
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>{course.category}</span>
-                        {course.totalStudents && (
-                          <span>{course.totalStudents} students</span>
-                        )}
-                      </div>
-
-                      {/* Rating */}
-                      {course.rating && (
-                        <div className="flex items-center gap-1">
-                          <span className="text-yellow-500">⭐</span>
-                          <span className="text-sm font-medium">
-                            {course.rating.toFixed(1)}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Instructor */}
-                      {course.instructor && (
-                        <div className="text-sm text-muted-foreground">
-                          By {course.instructor.firstName}{' '}
-                          {course.instructor.lastName}
-                        </div>
-                      )}
-
-                      {/* Price and Enroll */}
-                      <div className="flex items-center justify-between pt-2">
-                        <div className="text-lg font-bold">
-                          {course.price ? (
-                            <span>
-                              ${course.price} {course.currency?.toUpperCase()}
-                            </span>
-                          ) : (
-                            <span className="text-green-600">Free</span>
-                          )}
-                        </div>
-                        <Button
-                          onClick={() => handleEnroll(course)}
-                          disabled={hasCourse(course.id)}
-                          size="sm"
-                        >
-                          {hasCourse(course.id) ? 'In Cart' : 'Enroll'}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </>
-        )}
 
         {/* Cart Summary */}
-        {cartItems.length > 0 && (
-          <div className="fixed bottom-4 right-4 z-50">
-            <Card className="shadow-lg">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="text-sm">
-                    <span className="font-medium">{cartItems.length}</span>{' '}
-                    course{cartItems.length !== 1 ? 's' : ''} in cart
-                  </div>
-                  <Button size="sm">View Cart</Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
 
         {/* Microfrontend Info */}
         <div className="mt-12 pt-8 border-t">

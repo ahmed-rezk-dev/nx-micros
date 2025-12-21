@@ -1,6 +1,6 @@
 import * as React from 'react';
 import NxWelcome from './nx-welcome';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes, Navigate } from 'react-router-dom';
 import { Button } from '@nx-micros/ui';
 import {
   Card,
@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from '@nx-micros/ui';
 import { ErrorBoundary, ToastProvider, ToastContainer } from '@nx-micros/ui';
+import { useAuth } from '../stores';
 
 const Account = React.lazy(() => import('account/Module'));
 
@@ -23,7 +24,25 @@ const Dashboard = React.lazy(() => import('dashboard/Module'));
 
 const Auth = React.lazy(() => import('auth/Module'));
 
+// Protected Route component
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <>{children}</> : <Navigate to="/auth" replace />;
+}
+
+// Public Route component (redirects authenticated users)
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth();
+  return !isAuthenticated ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/dashboard" replace />
+  );
+}
+
 export function App() {
+  const { isAuthenticated, user, logout } = useAuth();
+
   return (
     <ErrorBoundary>
       <ToastProvider>
@@ -42,28 +61,42 @@ export function App() {
                   <h1 className="text-2xl font-bold text-primary">
                     Nx Microfrontends
                   </h1>
-                  <nav className="flex gap-4">
+                  <nav className="flex gap-4 items-center">
                     <Button asChild variant="ghost">
                       <Link to="/">Home</Link>
                     </Button>
-                    <Button asChild variant="ghost">
-                      <Link to="/dashboard">Dashboard</Link>
-                    </Button>
-                    <Button asChild variant="ghost">
-                      <Link to="/courses">Courses</Link>
-                    </Button>
-                    <Button asChild variant="ghost">
-                      <Link to="/learning">Learning</Link>
-                    </Button>
-                    <Button asChild variant="ghost">
-                      <Link to="/instructor">Instructor</Link>
-                    </Button>
-                    <Button asChild variant="ghost">
-                      <Link to="/account">Account</Link>
-                    </Button>
-                    <Button asChild variant="ghost">
-                      <Link to="/auth">Authentication</Link>
-                    </Button>
+
+                    {isAuthenticated ? (
+                      <>
+                        <Button asChild variant="ghost">
+                          <Link to="/dashboard">Dashboard</Link>
+                        </Button>
+                        <Button asChild variant="ghost">
+                          <Link to="/courses">Courses</Link>
+                        </Button>
+                        <Button asChild variant="ghost">
+                          <Link to="/learning">Learning</Link>
+                        </Button>
+                        <Button asChild variant="ghost">
+                          <Link to="/instructor">Instructor</Link>
+                        </Button>
+                        <Button asChild variant="ghost">
+                          <Link to="/account">Account</Link>
+                        </Button>
+                        <div className="flex items-center gap-2 ml-4 pl-4 border-l">
+                          <span className="text-sm text-gray-600">
+                            Welcome, {user?.firstName || user?.email}
+                          </span>
+                          <Button variant="outline" size="sm" onClick={logout}>
+                            Logout
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <Button asChild variant="ghost">
+                        <Link to="/auth">Sign In</Link>
+                      </Button>
+                    )}
                   </nav>
                 </div>
               </div>
@@ -128,12 +161,54 @@ export function App() {
                     </div>
                   }
                 />
-                <Route path="/account" element={<Account />} />
-                <Route path="/instructor" element={<Instructor />} />
-                <Route path="/learning" element={<Learning />} />
-                <Route path="/courses" element={<Courses />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/auth" element={<Auth />} />
+                <Route
+                  path="/auth"
+                  element={
+                    <PublicRoute>
+                      <Auth />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/courses"
+                  element={
+                    <ProtectedRoute>
+                      <Courses />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/learning"
+                  element={
+                    <ProtectedRoute>
+                      <Learning />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/instructor"
+                  element={
+                    <ProtectedRoute>
+                      <Instructor />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/account"
+                  element={
+                    <ProtectedRoute>
+                      <Account />
+                    </ProtectedRoute>
+                  }
+                />
               </Routes>
             </main>
           </React.Suspense>

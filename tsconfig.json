@@ -19,12 +19,6 @@
       "path": "./apps/services"
     },
     {
-      "path": "./libs/shared"
-    },
-    {
-      "path": "./libs/shared/shared-database"
-    },
-    {
       "path": "./dashboard-e2e"
     },
     {

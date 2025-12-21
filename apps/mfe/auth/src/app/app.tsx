@@ -1,68 +1,43 @@
-import NxWelcome from './nx-welcome';
-import '../styles.css';
-import { Button } from '@nx-micros/ui';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@nx-micros/ui';
-import { Input } from '@nx-micros/ui';
+import { useState, useEffect } from 'react';
+import { LoginForm } from './components/LoginForm';
+import { SignupForm } from './components/SignupForm';
+import { useAuth } from 'shell/stores';
 
 export function App() {
+  const [isLogin, setIsLogin] = useState(true);
+  const { isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      window.location.href = '/dashboard';
+    }
+  }, [isAuthenticated]);
+
+  const handleSwitchToSignup = () => setIsLogin(false);
+  const handleSwitchToLogin = () => setIsLogin(true);
+
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       <div className="max-w-md mx-auto space-y-6">
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Authentication</CardTitle>
-            <CardDescription>Sign in to access your account</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                className="w-full"
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
-                Password
-              </label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                className="w-full"
-              />
-            </div>
-            <div className="flex gap-3 pt-4">
-              <Button className="flex-1">Sign In</Button>
-              <Button variant="outline" className="flex-1">
-                Sign Up
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {isLogin ? (
+          <LoginForm onSwitchToSignup={handleSwitchToSignup} />
+        ) : (
+          <SignupForm onSwitchToLogin={handleSwitchToLogin} />
+        )}
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center text-sm text-muted-foreground">
-              <p>This is the Authentication microfrontend</p>
-              <p className="mt-2">
-                Built with shared UI components from the design system
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <NxWelcome title="auth" />
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-md mb-4">
+            <span className="text-2xl">🎓</span>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Welcome to Nx Microfrontends
+          </h3>
+          <p className="text-sm text-gray-600">
+            A modern learning platform built with microservices and module
+            federation
+          </p>
+        </div>
       </div>
     </div>
   );
