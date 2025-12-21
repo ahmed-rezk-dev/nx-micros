@@ -3,6 +3,13 @@ import { ModuleFederationConfig } from '@nx/module-federation';
 const config: ModuleFederationConfig = {
   name: 'shell',
   /**
+   * Expose stores and API from shell app to be consumed by other MFEs
+   */
+  exposes: {
+    './stores': './src/stores/index.ts',
+    './api': './src/api.ts',
+  },
+  /**
    * To use a remote that does not exist in your current Nx Workspace
    * You can use the tuple-syntax to define your remote
    *
@@ -22,31 +29,29 @@ const config: ModuleFederationConfig = {
     'instructor',
     'account',
   ],
-  shared: {
-    // CRITICAL: Share React, React-DOM, and Zustand as singletons
-    // This prevents multiple instances and initialization conflicts
-    react: {
-      singleton: true,
-      requiredVersion: '^18.0.0',
-      eager: true,
-    },
-    'react-dom': {
-      singleton: true,
-      requiredVersion: '^18.0.0',
-      eager: true,
-    },
-    zustand: {
-      singleton: true,
-      requiredVersion: '^4.0.0',
-      eager: true,
-    },
-    // Share UI components
-    '@nx-micros/ui': {
-      singleton: true,
-      eager: true,
-    },
+  shared: (libraryName: string) => {
+    // Share common libraries as singletons to prevent duplication
+    if (
+      libraryName === 'react' ||
+      libraryName === 'react-dom' ||
+      libraryName === 'zustand'
+    ) {
+      return {
+        singleton: true,
+        eager: true,
+      };
+    }
+    // Explicitly share @hookform/resolvers with correct version
+    if (libraryName === '@hookform/resolvers') {
+      return {
+        singleton: true,
+        eager: true,
+        requiredVersion: '^5.2.2',
+      };
+    }
+    return false;
   },
-} as any; // Type assertion needed for Nx compatibility
+};
 
 /**
  * Nx requires a default export of the config to allow correct resolution of the module federation graph.

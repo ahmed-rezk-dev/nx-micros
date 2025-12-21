@@ -83,7 +83,8 @@
     "courses",
     "learning",
     "instructor",
-    "account"
+    "account",
+    "libs"
   ],
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.956.0",
