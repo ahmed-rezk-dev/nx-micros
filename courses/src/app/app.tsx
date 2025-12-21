@@ -1,12 +1,42 @@
-import { useState } from 'react';
-import { Input } from '@nx-micros/ui';
-import { useAuth } from 'shell/stores';
+import { useState, useEffect } from 'react';
+import {
+  Input,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@nx-micros/ui';
+import { useAuthStore, useCartStore } from 'shell/stores';
+import {
+  BookOpen,
+  Clock,
+  Users,
+  Star,
+  Search,
+  Filter,
+  ShoppingCart,
+  CheckCircle,
+} from 'lucide-react';
 
-// Type assertion for apiClient to fix TypeScript issues
-// const typedApiClient = apiClient as {
-//   get: <T>(url: string) => Promise<T>;
-//   post: <T>(url: string, data?: any) => Promise<T>;
-// };
+interface Course {
+  id: string;
+  title: string;
+  description: string;
+  instructor: string;
+  category: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  price: number;
+  originalPrice?: number;
+  rating: number;
+  totalRatings: number;
+  totalStudents: number;
+  duration: number; // in hours
+  thumbnail: string;
+  tags: string[];
+  featured?: boolean;
+}
 
 interface CourseFilters {
   category?: string;
@@ -17,31 +47,192 @@ interface CourseFilters {
 }
 
 export function App() {
-  const { isAuthenticated } = useAuth();
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log('App isAuthenticated:', isAuthenticated); // __AUTO_GENERATED_PRINT_VAR_END__
-  // const { items: cartItems, addCourse, hasCourse } = useCart();
-  // const { setLoading, isLoading } = useUI();
+  const { isAuthenticated } = useAuthStore();
+  const { addCourse, hasCourse } = useCartStore();
 
-  const [categories] = useState<string[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const [categories] = useState<string[]>([
+    'Web Development',
+    'Data Science',
+    'Mobile Development',
+    'DevOps',
+    'Design',
+    'Business',
+  ]);
   const [filters, setFilters] = useState<CourseFilters>({
     sortBy: 'title',
     sortOrder: 'ASC',
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // const loadCategories = async () => {
-  //   try {
-  //     const response = await typedApiClient.get<string[]>(
-  //       '/courses/categories',
-  //     );
-  //     setCategories(Array.isArray(response) ? response : []);
-  //   } catch (error) {
-  //     console.error('Failed to load categories:', error);
-  //     // Fallback categories
-  //     setCategories(['Web Development', 'Data Science', 'Mobile Development']);
-  //   }
-  // };
+  // Mock course data
+  const mockCourses: Course[] = [
+    {
+      id: '1',
+      title: 'React Fundamentals',
+      description:
+        'Master the basics of React development with hands-on projects',
+      instructor: 'Sarah Johnson',
+      category: 'Web Development',
+      level: 'beginner',
+      price: 89.99,
+      originalPrice: 129.99,
+      rating: 4.8,
+      totalRatings: 1247,
+      totalStudents: 15420,
+      duration: 12,
+      thumbnail: '/api/placeholder/400/250',
+      tags: ['React', 'JavaScript', 'Frontend'],
+      featured: true,
+    },
+    {
+      id: '2',
+      title: 'Advanced Node.js',
+      description:
+        'Build scalable backend applications with Node.js and Express',
+      instructor: 'Mike Chen',
+      category: 'Web Development',
+      level: 'advanced',
+      price: 149.99,
+      rating: 4.9,
+      totalRatings: 892,
+      totalStudents: 8920,
+      duration: 18,
+      thumbnail: '/api/placeholder/400/250',
+      tags: ['Node.js', 'Backend', 'API'],
+    },
+    {
+      id: '3',
+      title: 'Python for Data Science',
+      description: 'Learn data analysis and machine learning with Python',
+      instructor: 'Dr. Emily Davis',
+      category: 'Data Science',
+      level: 'intermediate',
+      price: 119.99,
+      originalPrice: 159.99,
+      rating: 4.7,
+      totalRatings: 2156,
+      totalStudents: 25600,
+      duration: 20,
+      thumbnail: '/api/placeholder/400/250',
+      tags: ['Python', 'Data Science', 'ML'],
+    },
+    {
+      id: '4',
+      title: 'UI/UX Design Fundamentals',
+      description: 'Create beautiful and user-friendly interfaces',
+      instructor: 'Alex Rivera',
+      category: 'Design',
+      level: 'beginner',
+      price: 79.99,
+      rating: 4.6,
+      totalRatings: 1432,
+      totalStudents: 12800,
+      duration: 10,
+      thumbnail: '/api/placeholder/400/250',
+      tags: ['UI/UX', 'Design', 'Figma'],
+    },
+    {
+      id: '5',
+      title: 'DevOps with Docker & Kubernetes',
+      description: 'Master containerization and orchestration',
+      instructor: 'James Wilson',
+      category: 'DevOps',
+      level: 'intermediate',
+      price: 139.99,
+      rating: 4.8,
+      totalRatings: 987,
+      totalStudents: 7650,
+      duration: 16,
+      thumbnail: '/api/placeholder/400/250',
+      tags: ['Docker', 'Kubernetes', 'DevOps'],
+    },
+    {
+      id: '6',
+      title: 'Mobile App Development with React Native',
+      description: 'Build cross-platform mobile apps',
+      instructor: 'Lisa Park',
+      category: 'Mobile Development',
+      level: 'intermediate',
+      price: 109.99,
+      originalPrice: 149.99,
+      rating: 4.5,
+      totalRatings: 1654,
+      totalStudents: 12300,
+      duration: 14,
+      thumbnail: '/api/placeholder/400/250',
+      tags: ['React Native', 'Mobile', 'iOS', 'Android'],
+    },
+  ];
+
+  useEffect(() => {
+    loadCourses();
+  }, []);
+
+  useEffect(() => {
+    filterAndSortCourses();
+  }, [courses, filters]);
+
+  const loadCourses = async () => {
+    try {
+      setIsLoading(true);
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setCourses(mockCourses);
+    } catch (error) {
+      console.error('Failed to load courses:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const filterAndSortCourses = () => {
+    let filtered = [...courses];
+
+    // Apply filters
+    if (filters.search) {
+      filtered = filtered.filter(
+        (course) =>
+          course.title.toLowerCase().includes(filters.search!.toLowerCase()) ||
+          course.description
+            .toLowerCase()
+            .includes(filters.search!.toLowerCase()) ||
+          course.instructor
+            .toLowerCase()
+            .includes(filters.search!.toLowerCase()),
+      );
+    }
+
+    if (filters.category) {
+      filtered = filtered.filter(
+        (course) => course.category === filters.category,
+      );
+    }
+
+    if (filters.level) {
+      filtered = filtered.filter((course) => course.level === filters.level);
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let aValue: any = a[filters.sortBy || 'title'];
+      let bValue: any = b[filters.sortBy || 'title'];
+
+      if (filters.sortBy === 'title') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      if (filters.sortOrder === 'DESC') {
+        return aValue < bValue ? 1 : -1;
+      }
+      return aValue > bValue ? 1 : -1;
+    });
+
+    setFilteredCourses(filtered);
+  };
 
   const handleSearch = () => {
     setFilters((prev) => ({
@@ -57,85 +248,317 @@ export function App() {
     }));
   };
 
-  return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            Course Catalog
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Discover and enroll in our comprehensive course collection
-          </p>
-        </div>
+  const handleAddToCart = (course: Course) => {
+    addCourse(course);
+  };
 
-        {/* Search and Filters */}
-        <div className="mb-8 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <Input
-                type="text"
-                placeholder="Search courses..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-8">
+        <Card className="w-full max-w-md shadow-2xl border-0 rounded-3xl">
+          <CardHeader className="text-center pb-8 pt-10">
+            <div className="mx-auto mb-8 w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center">
+              <BookOpen className="w-10 h-10 text-white" />
+            </div>
+            <CardTitle className="text-2xl font-bold">Course Catalog</CardTitle>
+            <CardDescription className="text-lg mt-3">
+              Sign in to explore our comprehensive course collection
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pb-10">
+            <Button
+              className="w-full py-4 text-lg rounded-2xl"
+              onClick={() => (window.location.href = '/auth')}
+            >
+              Sign In to Browse Courses
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="max-w-7xl mx-auto px-8 py-12">
+        <div className="space-y-12">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
+                <BookOpen className="w-8 h-8 text-white" />
+              </div>
+            </div>
+            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white">
+              Course Catalog
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Discover and enroll in our comprehensive collection of expert-led
+              courses
+            </p>
+          </div>
+
+          {/* Search and Filters */}
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border-0 p-8">
+            <div className="space-y-6">
+              <div className="flex flex-col lg:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    type="text"
+                    placeholder="Search courses by title, instructor, or topic..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-4 py-4 text-lg rounded-2xl border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400"
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  />
+                </div>
+                <Button
+                  onClick={handleSearch}
+                  className="px-8 py-4 rounded-2xl font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                >
+                  <Search className="w-5 h-5 mr-2" />
+                  Search
+                </Button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                  <Filter className="w-5 h-5" />
+                  <span className="font-medium">Filters:</span>
+                </div>
+
+                <select
+                  value={filters.category || ''}
+                  onChange={(e) =>
+                    handleFilterChange('category', e.target.value)
+                  }
+                  className="px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-xl text-sm font-medium focus:border-blue-500 dark:focus:border-blue-400"
+                >
+                  <option value="">All Categories</option>
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={filters.level || ''}
+                  onChange={(e) => handleFilterChange('level', e.target.value)}
+                  className="px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-xl text-sm font-medium focus:border-blue-500 dark:focus:border-blue-400"
+                >
+                  <option value="">All Levels</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+
+                <select
+                  value={`${filters.sortBy || 'title'}-${filters.sortOrder || 'ASC'}`}
+                  onChange={(e) => {
+                    const [sortBy, sortOrder] = e.target.value.split('-');
+                    setFilters((prev) => ({
+                      ...prev,
+                      sortBy: sortBy as any,
+                      sortOrder: sortOrder as any,
+                    }));
+                  }}
+                  className="px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-xl text-sm font-medium focus:border-blue-500 dark:focus:border-blue-400"
+                >
+                  <option value="title-ASC">Title A-Z</option>
+                  <option value="title-DESC">Title Z-A</option>
+                  <option value="price-ASC">Price: Low to High</option>
+                  <option value="price-DESC">Price: High to Low</option>
+                  <option value="rating-DESC">Highest Rated</option>
+                  <option value="totalStudents-DESC">Most Popular</option>
+                </select>
+
+                {(filters.category || filters.level || filters.search) && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setFilters({ sortBy: 'title', sortOrder: 'ASC' });
+                      setSearchQuery('');
+                    }}
+                    className="px-4 py-3 rounded-xl font-medium"
+                  >
+                    Clear Filters
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-4">
-            <select
-              value={filters.category || ''}
-              onChange={(e) => handleFilterChange('category', e.target.value)}
-              className="px-3 py-2 border border-input bg-background rounded-md text-sm"
-            >
-              <option value="">All Categories</option>
-              {Array.isArray(categories) &&
-                categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
+          {/* Course Grid */}
+          <div className="space-y-8">
+            {isLoading ? (
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <Card
+                    key={i}
+                    className="bg-white dark:bg-gray-800 shadow-lg border-0 rounded-3xl overflow-hidden"
+                  >
+                    <div className="h-48 bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 animate-pulse"></div>
+                      <div className="flex justify-between items-center pt-4">
+                        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-20 animate-pulse"></div>
+                        <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-xl w-24 animate-pulse"></div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
-            </select>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <p className="text-lg text-gray-600 dark:text-gray-300">
+                    Showing {filteredCourses.length} course
+                    {filteredCourses.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
 
-            <select
-              value={filters.level || ''}
-              onChange={(e) => handleFilterChange('level', e.target.value)}
-              className="px-3 py-2 border border-input bg-background rounded-md text-sm"
-            >
-              <option value="">All Levels</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </select>
+                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                  {filteredCourses.map((course) => (
+                    <Card
+                      key={course.id}
+                      className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-0 rounded-3xl overflow-hidden group"
+                    >
+                      <div className="relative">
+                        <div className="h-48 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center">
+                          <BookOpen className="w-16 h-16 text-white opacity-80" />
+                        </div>
+                        {course.featured && (
+                          <div className="absolute top-4 left-4 bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold">
+                            FEATURED
+                          </div>
+                        )}
+                        <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm">
+                          {course.level}
+                        </div>
+                      </div>
 
-            <select
-              value={`${filters.sortBy || 'title'}-${filters.sortOrder || 'ASC'}`}
-              onChange={(e) => {
-                const [sortBy, sortOrder] = e.target.value.split('-');
-                setFilters((prev) => ({
-                  ...prev,
-                  sortBy: sortBy as any,
-                  sortOrder: sortOrder as any,
-                }));
-              }}
-              className="px-3 py-2 border border-input bg-background rounded-md text-sm"
-            >
-              <option value="title-ASC">Title A-Z</option>
-              <option value="title-DESC">Title Z-A</option>
-              <option value="price-ASC">Price Low-High</option>
-              <option value="price-DESC">Price High-Low</option>
-              <option value="rating-DESC">Highest Rated</option>
-              <option value="totalStudents-DESC">Most Popular</option>
-            </select>
+                      <CardContent className="p-6 space-y-4">
+                        <div className="space-y-2">
+                          <CardTitle className="text-xl font-bold text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            {course.title}
+                          </CardTitle>
+                          <CardDescription className="text-gray-600 dark:text-gray-300 line-clamp-2">
+                            {course.description}
+                          </CardDescription>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                          <Users className="w-4 h-4" />
+                          <span>{course.instructor}</span>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4 text-sm">
+                            <div className="flex items-center gap-1">
+                              <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                              <span className="font-semibold text-gray-900 dark:text-white">
+                                {course.rating}
+                              </span>
+                              <span className="text-gray-500 dark:text-gray-400">
+                                ({course.totalRatings})
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                              <Users className="w-4 h-4" />
+                              <span>
+                                {course.totalStudents.toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                          <Clock className="w-4 h-4" />
+                          <span>{course.duration} hours</span>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                                ${course.price}
+                              </span>
+                              {course.originalPrice && (
+                                <span className="text-lg text-gray-500 line-through">
+                                  ${course.originalPrice}
+                                </span>
+                              )}
+                            </div>
+                            {course.originalPrice && (
+                              <div className="text-sm text-green-600 font-semibold">
+                                Save ${course.originalPrice - course.price}
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            onClick={() => handleAddToCart(course)}
+                            disabled={hasCourse(course.id)}
+                            className="px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50"
+                          >
+                            {hasCourse(course.id) ? (
+                              <>
+                                <CheckCircle className="w-4 h-4 mr-2" />
+                                In Cart
+                              </>
+                            ) : (
+                              <>
+                                <ShoppingCart className="w-4 h-4 mr-2" />
+                                Add to Cart
+                              </>
+                            )}
+                          </Button>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {course.tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-full"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {filteredCourses.length === 0 && (
+                  <div className="text-center py-16">
+                    <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                      <Search className="w-10 h-10 text-gray-400" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                      No courses found
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-lg mb-6">
+                      Try adjusting your search criteria or browse all courses
+                    </p>
+                    <Button
+                      onClick={() => {
+                        setFilters({ sortBy: 'title', sortOrder: 'ASC' });
+                        setSearchQuery('');
+                      }}
+                      className="px-6 py-3 rounded-xl font-semibold"
+                    >
+                      Clear Filters
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
-
-        {/* Course Grid */}
-
-        {/* Cart Summary */}
       </div>
     </div>
   );
