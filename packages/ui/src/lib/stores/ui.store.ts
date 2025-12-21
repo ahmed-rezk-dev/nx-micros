@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { useEffect } from 'react';
 
 // Browser environment types
 declare const window: any;
@@ -83,15 +82,16 @@ export const useUIStore = create<UIState>((set, get) => ({
 
 // Custom hook for safe UI store usage
 export const useUI = () => {
-  // Initialize theme on first use
-  useEffect(() => {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      const savedTheme = localStorage.getItem('ui-theme') as 'light' | 'dark';
-      if (savedTheme && savedTheme !== useUIStore.getState().theme) {
-        useUIStore.getState().setTheme(savedTheme);
-      }
-    }
-  }, []);
-
   return useUIStore();
 };
+
+// Initialize theme only in browser environment and after module federation loads
+if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+  // Delay initialization to ensure module federation is fully loaded
+  setTimeout(() => {
+    const savedTheme = localStorage.getItem('ui-theme') as 'light' | 'dark';
+    if (savedTheme && savedTheme !== useUIStore.getState().theme) {
+      useUIStore.getState().setTheme(savedTheme);
+    }
+  }, 100);
+}

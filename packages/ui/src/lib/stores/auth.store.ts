@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { useEffect } from 'react';
 
 // Browser environment types
 declare const window: any;
@@ -140,15 +139,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
 // Custom hook for safe auth store usage
 export const useAuth = () => {
-  // Initialize on first use in browser environment
-  useEffect(() => {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      useAuthStore.getState().initialize();
-    }
-  }, []);
-
   return useAuthStore();
 };
 
-// Store initialization is now handled lazily in the hook
-// No global initialization to avoid SSR/module federation issues
+// Initialize store only in browser environment and after module federation loads
+if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+  // Delay initialization to ensure module federation is fully loaded
+  setTimeout(() => {
+    useAuthStore.getState().initialize();
+  }, 100);
+}
