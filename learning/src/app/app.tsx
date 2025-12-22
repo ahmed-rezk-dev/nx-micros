@@ -19,7 +19,7 @@ export function App() {
     <ErrorBoundary>
       <ToastProvider>
         <Router>
-          <div className="min-h-screen bg-gray-50">
+          <div className="min-h-screen bg-background">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               <Routes>
                 <Route
@@ -28,10 +28,10 @@ export function App() {
                     <div className="text-center py-12">
                       <Card className="max-w-md mx-auto">
                         <CardContent className="pt-6">
-                          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                          <h1 className="text-2xl font-bold text-foreground mb-4">
                             Welcome to Learning
                           </h1>
-                          <p className="text-gray-600 mb-6">
+                          <p className="text-muted-foreground mb-6">
                             Select a course from the dashboard to start
                             learning.
                           </p>

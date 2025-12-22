@@ -78,7 +78,7 @@ class ErrorBoundary extends React.Component<
                 page.
               </p>
             </div>
-            <div className="space-y-3">
+            <div className="flex flex-col gap-3">
               <button
                 onClick={this.resetError}
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md font-medium transition-colors"

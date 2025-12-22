@@ -70,7 +70,7 @@ export default function LearningProgress() {
       : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-8">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Learning Progress

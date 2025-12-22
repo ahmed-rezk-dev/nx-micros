@@ -92,15 +92,15 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
         <CardDescription>Join our learning platform</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex flex-col gap-3">
               <label htmlFor="firstName" className="text-sm font-medium">
                 First Name
               </label>
@@ -118,7 +118,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
               )}
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-3">
               <label htmlFor="lastName" className="text-sm font-medium">
                 Last Name
               </label>
@@ -137,7 +137,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-3">
             <label htmlFor="email" className="text-sm font-medium">
               Email
             </label>
@@ -153,7 +153,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-3">
             <label htmlFor="password" className="text-sm font-medium">
               Password
             </label>
@@ -169,7 +169,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-3">
             <label htmlFor="confirmPassword" className="text-sm font-medium">
               Confirm Password
             </label>

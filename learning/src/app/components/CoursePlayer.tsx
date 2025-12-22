@@ -6,9 +6,21 @@ import {
   CardHeader,
   CardTitle,
   Button,
+  Badge,
+  Separator,
+  Progress,
 } from '@nx-micros/ui';
 import { apiClient } from 'shell/stores';
 import { LoadingCard } from './LoadingSpinner';
+import {
+  Play,
+  FileText,
+  Brain,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+} from 'lucide-react';
 
 interface Lesson {
   id: string;
@@ -18,6 +30,7 @@ interface Lesson {
   type: 'video' | 'text' | 'quiz';
   duration: number;
   order: number;
+  completed?: boolean;
 }
 
 interface Course {
@@ -86,7 +99,7 @@ export default function CoursePlayer() {
     return (
       <Card className="w-full">
         <CardContent className="p-6">
-          <div className="text-center text-red-600">
+          <div className="text-center text-destructive">
             {error || 'Course not found'}
           </div>
         </CardContent>
@@ -98,7 +111,7 @@ export default function CoursePlayer() {
     return (
       <Card className="w-full">
         <CardContent className="p-6">
-          <div className="text-center text-gray-600">
+          <div className="text-center text-muted-foreground">
             No lessons available in this course
           </div>
         </CardContent>
@@ -106,83 +119,142 @@ export default function CoursePlayer() {
     );
   }
 
+  const completedLessons = course.lessons.filter(
+    (lesson) => lesson.completed,
+  ).length;
+  const progressPercentage = Math.round(
+    (completedLessons / course.lessons.length) * 100,
+  );
+
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-8">
+      {/* Course Progress */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
             <span>{course.title}</span>
-            <span className="text-sm font-normal text-gray-500">
+            <Badge variant="secondary">{progressPercentage}% Complete</Badge>
+          </CardTitle>
+          <Progress value={progressPercentage} className="mt-2" />
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+            <span>
               Lesson {currentLesson.order} of {course.lessons.length}
             </span>
+            <span>{completedLessons} completed</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3">
+            {currentLesson.type === 'video' && (
+              <Play className="w-5 h-5 text-primary" />
+            )}
+            {currentLesson.type === 'text' && (
+              <FileText className="w-5 h-5 text-primary" />
+            )}
+            {currentLesson.type === 'quiz' && (
+              <Brain className="w-5 h-5 text-primary" />
+            )}
+            <span>{currentLesson.title}</span>
+            <Badge
+              variant={
+                currentLesson.type === 'video'
+                  ? 'default'
+                  : currentLesson.type === 'text'
+                    ? 'secondary'
+                    : 'destructive'
+              }
+            >
+              {currentLesson.type}
+            </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-2">
-              {currentLesson.title}
-            </h3>
-            <p className="text-gray-600 mb-4">{currentLesson.description}</p>
+            <p className="text-muted-foreground mb-4">
+              {currentLesson.description}
+            </p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock className="w-4 h-4" />
+              <span>
+                {Math.floor(currentLesson.duration / 60)}:
+                {(currentLesson.duration % 60).toString().padStart(2, '0')}
+              </span>
+            </div>
           </div>
+
+          <Separator className="my-6" />
 
           {/* Video Player Placeholder */}
           {currentLesson.type === 'video' && (
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg aspect-video mb-6 flex items-center justify-center relative overflow-hidden">
-              <div className="text-white text-center z-10">
-                <div className="text-6xl mb-4 animate-bounce">🎥</div>
+            <div className="bg-gradient-to-br from-background to-muted rounded-lg aspect-video mb-6 flex items-center justify-center relative overflow-hidden border">
+              <div className="text-foreground text-center z-10">
+                <Play className="w-16 h-16 mx-auto mb-4 text-primary animate-pulse" />
                 <p className="font-semibold text-lg mb-2">Video Lesson</p>
-                <p className="text-sm opacity-75">
+                <p className="text-sm text-muted-foreground">
                   Duration: {Math.floor(currentLesson.duration / 60)}:
                   {(currentLesson.duration % 60).toString().padStart(2, '0')}
                 </p>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 animate-pulse"></div>
             </div>
           )}
 
           {/* Text Content */}
           {currentLesson.type === 'text' && (
             <div className="prose max-w-none mb-6">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-lg shadow-sm border border-gray-200">
+              <Card className="p-8 bg-muted/30">
                 <div
-                  className="text-gray-800 leading-relaxed"
+                  className="text-foreground leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: currentLesson.content }}
                 />
-              </div>
+              </Card>
             </div>
           )}
 
           {/* Quiz Placeholder */}
           {currentLesson.type === 'quiz' && (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-lg mb-6 border-2 border-dashed border-blue-200">
+            <Card className="p-8 mb-6 border-dashed border-2 bg-primary/5">
               <div className="text-center">
-                <div className="text-6xl mb-4 animate-pulse">📝</div>
-                <h4 className="text-xl font-semibold mb-2 text-blue-900">
-                  Interactive Quiz
-                </h4>
-                <p className="text-gray-600 mb-4">
+                <Brain className="w-16 h-16 mx-auto mb-4 text-primary animate-pulse" />
+                <h4 className="text-xl font-semibold mb-2">Interactive Quiz</h4>
+                <p className="text-muted-foreground mb-4">
                   Test your knowledge with this lesson quiz.
                 </p>
-                <div className="bg-white rounded-lg p-4 shadow-sm inline-block">
-                  <p className="text-sm text-gray-500">Coming Soon</p>
-                </div>
+                <Badge variant="outline">Coming Soon</Badge>
               </div>
-            </div>
+            </Card>
           )}
+
+          <Separator className="my-6" />
 
           {/* Navigation */}
           <div className="flex justify-between items-center">
             <Button variant="outline" disabled={currentLesson.order === 1}>
+              <ChevronLeft className="w-4 h-4 mr-2" />
               Previous Lesson
             </Button>
             <Button
               onClick={() => markLessonComplete(currentLesson.id)}
-              className="bg-green-600 hover:bg-green-700"
+              className={
+                currentLesson.completed ? 'bg-green-600 hover:bg-green-700' : ''
+              }
             >
-              Mark as Complete
+              {currentLesson.completed ? (
+                <>
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Completed
+                </>
+              ) : (
+                'Mark as Complete'
+              )}
             </Button>
             <Button disabled={currentLesson.order === course.lessons.length}>
               Next Lesson
+              <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
         </CardContent>

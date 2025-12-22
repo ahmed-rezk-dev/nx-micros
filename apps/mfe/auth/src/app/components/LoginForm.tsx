@@ -79,14 +79,14 @@ export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
         <CardDescription>Sign in to your account</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-3">
             <label htmlFor="email" className="text-sm font-medium">
               Email
             </label>
@@ -102,7 +102,7 @@ export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-3">
             <label htmlFor="password" className="text-sm font-medium">
               Password
             </label>

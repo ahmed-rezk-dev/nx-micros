@@ -60,7 +60,7 @@ export function App() {
                   <h1 className="text-2xl font-bold text-primary">
                     Nx Microfrontends
                   </h1>
-                  <nav className="flex gap-4 items-center">
+                  <nav className="flex-col gap-4 items-center">
                     <Button asChild variant="ghost">
                       <Link to="/">Home</Link>
                     </Button>
@@ -107,7 +107,7 @@ export function App() {
                 <Route
                   path="/"
                   element={
-                    <div className="space-y-8">
+                    <div className="flex flex-col gap-12">
                       <Card>
                         <CardHeader>
                           <CardTitle className="text-3xl">

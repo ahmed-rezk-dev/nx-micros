@@ -6,9 +6,21 @@ import {
   CardHeader,
   CardTitle,
   Button,
+  Badge,
+  Separator,
+  Progress,
 } from '@nx-micros/ui';
 import { apiClient } from 'shell/stores';
 import { LoadingCard } from './LoadingSpinner';
+import {
+  CheckCircle,
+  Play,
+  FileText,
+  Brain,
+  Clock,
+  BarChart3,
+  ArrowLeft,
+} from 'lucide-react';
 
 interface Lesson {
   id: string;
@@ -81,21 +93,6 @@ export default function LessonNavigation() {
     navigate(`/learning/course/${courseId}/lesson/${lesson.id}`);
   };
 
-  const getLessonIcon = (type: string, completed: boolean) => {
-    if (completed) return '✅';
-
-    switch (type) {
-      case 'video':
-        return '🎬';
-      case 'text':
-        return '📖';
-      case 'quiz':
-        return '🧠';
-      default:
-        return '📚';
-    }
-  };
-
   if (loading) {
     return <LoadingCard />;
   }
@@ -104,7 +101,9 @@ export default function LessonNavigation() {
     return (
       <Card className="w-full">
         <CardContent className="p-4">
-          <div className="text-center text-gray-600">Course not found</div>
+          <div className="text-center text-muted-foreground">
+            Course not found
+          </div>
         </CardContent>
       </Card>
     );
@@ -118,27 +117,25 @@ export default function LessonNavigation() {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-6">
       {/* Progress Overview */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Course Progress</CardTitle>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <BarChart3 className="w-5 h-5" />
+            Course Progress
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="mb-4">
-            <div className="flex justify-between text-sm mb-2">
-              <span>Progress</span>
-              <span>
+          <div className="mb-6">
+            <div className="flex justify-between text-sm mb-4">
+              <span className="text-muted-foreground">Progress</span>
+              <span className="font-medium">
                 {completedLessons}/{course.lessons.length} lessons
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${progressPercentage}%` }}
-              ></div>
-            </div>
-            <div className="text-center mt-2 text-sm font-medium">
+            <Progress value={progressPercentage} className="mb-4" />
+            <div className="text-center text-sm font-medium">
               {progressPercentage}% Complete
             </div>
           </div>
@@ -151,39 +148,50 @@ export default function LessonNavigation() {
           <CardTitle className="text-lg">Lessons</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y">
             {course.lessons.map((lesson) => (
               <div
                 key={lesson.id}
-                className={`p-4 cursor-pointer hover:bg-gray-50 hover:shadow-sm transition-all duration-200 ${
+                className={`p-4 cursor-pointer hover:bg-muted/50 transition-all duration-200 ${
                   lessonId === lesson.id
-                    ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 shadow-sm'
+                    ? 'bg-primary/5 border-l-4 border-primary shadow-sm'
                     : ''
                 }`}
                 onClick={() => handleLessonClick(lesson)}
               >
-                <div className="flex items-start space-x-3">
-                  <div className="text-lg">
-                    {getLessonIcon(lesson.type, progress[lesson.id] || false)}
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    {progress[lesson.id] ? (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    ) : lesson.type === 'video' ? (
+                      <Play className="w-5 h-5 text-primary" />
+                    ) : lesson.type === 'text' ? (
+                      <FileText className="w-5 h-5 text-primary" />
+                    ) : (
+                      <Brain className="w-5 h-5 text-primary" />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p
-                      className={`text-sm font-medium truncate ${
-                        progress[lesson.id] ? 'text-gray-500' : 'text-gray-900'
-                      }`}
-                    >
-                      {lesson.title}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {lesson.type.charAt(0).toUpperCase() +
-                        lesson.type.slice(1)}{' '}
-                      • {Math.floor(lesson.duration / 60)}:
+                    <div className="flex items-center gap-2 mb-2">
+                      <p
+                        className={`text-sm font-medium truncate ${
+                          progress[lesson.id]
+                            ? 'text-muted-foreground'
+                            : 'text-foreground'
+                        }`}
+                      >
+                        {lesson.title}
+                      </p>
+                      <Badge variant="outline" className="text-xs ml-2">
+                        {lesson.type}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {Math.floor(lesson.duration / 60)}:
                       {(lesson.duration % 60).toString().padStart(2, '0')}
                     </p>
                   </div>
-                  {progress[lesson.id] && (
-                    <div className="text-green-600 text-sm font-medium">✓</div>
-                  )}
                 </div>
               </div>
             ))}
@@ -191,12 +199,14 @@ export default function LessonNavigation() {
         </CardContent>
       </Card>
 
+      <Separator />
+
       {/* Quick Actions */}
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-4 flex flex-col gap-2">
           <Button
             variant="outline"
-            className="w-full mb-2"
+            className="w-full"
             onClick={() => navigate('/learning/progress')}
           >
             View Full Progress
@@ -206,6 +216,7 @@ export default function LessonNavigation() {
             className="w-full"
             onClick={() => navigate('/courses')}
           >
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Courses
           </Button>
         </CardContent>

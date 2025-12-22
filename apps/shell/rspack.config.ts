@@ -36,7 +36,7 @@ export default {
       index: './src/index.html',
       baseHref: '/',
       assets: ['./src/favicon.ico', './src/assets'],
-      styles: ['./../../packages/ui/src/globals.css'],
+      styles: ['./src/globals.css'],
       outputHashing: process.env['NODE_ENV'] === 'production' ? 'all' : 'none',
       optimization: process.env['NODE_ENV'] === 'production',
     }),

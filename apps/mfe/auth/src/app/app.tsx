@@ -19,7 +19,7 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-md mx-auto space-y-6">
+      <div className="max-w-md mx-auto flex flex-col gap-8">
         {isLogin ? (
           <LoginForm onSwitchToSignup={handleSwitchToSignup} />
         ) : (

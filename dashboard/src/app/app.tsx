@@ -160,15 +160,15 @@ export function App() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
+        <div className="flex flex-col gap-12">
           {/* Header */}
           <div className="bg-card rounded-lg border p-6">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
                   <User className="w-6 h-6 text-primary-foreground" />
                 </div>
-                <div className="space-y-1">
+                <div className="flex flex-col gap-1">
                   <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
                     Welcome back, {user?.firstName || 'Student'}!
                   </h1>
@@ -187,7 +187,7 @@ export function App() {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Button variant="ghost" size="sm">
                   <Award className="w-4 h-4" />
                 </Button>
@@ -203,9 +203,9 @@ export function App() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   Total Courses
                 </CardTitle>
@@ -222,7 +222,7 @@ export function App() {
             </Card>
 
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Enrolled</CardTitle>
                 <GraduationCap className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -237,7 +237,7 @@ export function App() {
             </Card>
 
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Completed</CardTitle>
                 <Trophy className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -252,7 +252,7 @@ export function App() {
             </Card>
 
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   Study Time
                 </CardTitle>
@@ -268,7 +268,7 @@ export function App() {
           </div>
 
           {/* Weekly Goal & Achievements Row */}
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-8 lg:grid-cols-2">
             {/* Weekly Goal */}
             {weeklyGoal && (
               <Card>
@@ -282,30 +282,28 @@ export function App() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-sm">
-                      <span>Progress</span>
-                      <span className="font-medium">
-                        {Math.round(
-                          (weeklyGoal.current / weeklyGoal.target) * 100,
-                        )}
-                        %
-                      </span>
-                    </div>
-                    <div className="w-full bg-secondary rounded-full h-2">
-                      <div
-                        className="bg-primary h-2 rounded-full"
-                        style={{
-                          width: `${Math.min((weeklyGoal.current / weeklyGoal.target) * 100, 100)}%`,
-                        }}
-                      ></div>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {weeklyGoal.target - weeklyGoal.current > 0
-                        ? `${weeklyGoal.target - weeklyGoal.current}h remaining`
-                        : 'Goal achieved! 🎉'}
-                    </p>
+                  <div className="flex justify-between text-sm">
+                    <span>Progress</span>
+                    <span className="font-medium">
+                      {Math.round(
+                        (weeklyGoal.current / weeklyGoal.target) * 100,
+                      )}
+                      %
+                    </span>
                   </div>
+                  <div className="w-full bg-secondary rounded-full h-2">
+                    <div
+                      className="bg-primary h-2 rounded-full"
+                      style={{
+                        width: `${Math.min((weeklyGoal.current / weeklyGoal.target) * 100, 100)}%`,
+                      }}
+                    ></div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {weeklyGoal.target - weeklyGoal.current > 0
+                      ? `${weeklyGoal.target - weeklyGoal.current}h remaining`
+                      : 'Goal achieved! 🎉'}
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -320,33 +318,31 @@ export function App() {
                 <CardDescription>Your latest unlocked badges</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {achievements
-                    .filter((a) => a.unlocked)
-                    .slice(0, 3)
-                    .map((achievement) => (
-                      <div
-                        key={achievement.id}
-                        className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"
-                      >
-                        <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                          <Award className="w-4 h-4 text-primary-foreground" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium">
-                            {achievement.title}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {achievement.description}
-                          </p>
-                        </div>
-                        <CheckCircle className="w-5 h-5 text-green-600" />
+                {achievements
+                  .filter((a) => a.unlocked)
+                  .slice(0, 3)
+                  .map((achievement) => (
+                    <div
+                      key={achievement.id}
+                      className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"
+                    >
+                      <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                        <Award className="w-4 h-4 text-primary-foreground" />
                       </div>
-                    ))}
-                  <Button variant="outline" size="sm" className="w-full">
-                    View All Achievements
-                  </Button>
-                </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">
+                          {achievement.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {achievement.description}
+                        </p>
+                      </div>
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    </div>
+                  ))}
+                <Button variant="outline" size="sm" className="w-full">
+                  View All Achievements
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -371,14 +367,14 @@ export function App() {
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="space-y-4">
+                <div className="flex flex-col gap-4">
                   {Array.from({ length: 3 }).map((_, i) => (
                     <div
                       key={i}
                       className="flex items-center gap-4 p-4 border rounded-lg"
                     >
                       <div className="w-10 h-10 bg-muted rounded-full animate-pulse"></div>
-                      <div className="flex-1 space-y-2">
+                      <div className="flex flex-col gap-2 flex-1">
                         <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
                         <div className="h-3 bg-muted rounded w-1/2 animate-pulse"></div>
                       </div>
@@ -386,7 +382,7 @@ export function App() {
                   ))}
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="flex flex-col gap-4">
                   {activities.map((activity) => (
                     <div
                       key={activity.id}
@@ -429,7 +425,7 @@ export function App() {
               <CardDescription>Continue your learning journey</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Button
                   className="h-auto p-4 flex flex-col items-center gap-2"
                   onClick={() => (window.location.href = '/courses')}

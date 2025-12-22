@@ -6,9 +6,23 @@ import {
   CardHeader,
   CardTitle,
   Button,
+  Badge,
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  Separator,
+  Skeleton,
 } from '@nx-micros/ui';
 import { useAuthStore } from 'shell/stores';
-import { BookOpen, Search, Filter } from 'lucide-react';
+import {
+  BookOpen,
+  Search,
+  Filter,
+  Star,
+  Users,
+  Clock,
+  User,
+} from 'lucide-react';
 
 interface Course {
   id: string;
@@ -215,9 +229,9 @@ export function App() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
+        <div className="flex flex-col gap-12">
           {/* Header */}
-          <div className="text-center space-y-4">
+          <div className="text-center flex flex-col gap-4">
             <div className="flex items-center justify-center gap-4">
               <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-primary-foreground" />
@@ -235,7 +249,7 @@ export function App() {
           {/* Search and Filters */}
           <Card>
             <CardContent className="p-6">
-              <div className="space-y-4">
+              <div className="flex flex-col gap-4">
                 <div className="flex flex-col lg:flex-row gap-4">
                   <div className="flex-1 relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -253,6 +267,8 @@ export function App() {
                     Search
                   </Button>
                 </div>
+
+                <Separator />
 
                 <div className="flex flex-wrap gap-4">
                   <div className="flex items-center gap-2">
@@ -326,19 +342,19 @@ export function App() {
           </Card>
 
           {/* Course Grid */}
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6">
             {isLoading ? (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <Card key={i}>
-                    <div className="h-48 bg-muted animate-pulse"></div>
-                    <CardContent className="p-6 space-y-4">
-                      <div className="h-6 bg-muted rounded animate-pulse"></div>
-                      <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
-                      <div className="h-4 bg-muted rounded w-1/2 animate-pulse"></div>
+                    <Skeleton className="h-48 w-full" />
+                    <CardContent>
+                      <Skeleton className="h-6 w-full" />
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
                       <div className="flex justify-between items-center pt-4">
-                        <div className="h-6 bg-muted rounded w-20 animate-pulse"></div>
-                        <div className="h-10 bg-muted rounded w-24 animate-pulse"></div>
+                        <Skeleton className="h-6 w-20" />
+                        <Skeleton className="h-10 w-24" />
                       </div>
                     </CardContent>
                   </Card>
@@ -353,7 +369,7 @@ export function App() {
                   </p>
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                   {filteredCourses.map((course) => (
                     <Card
                       key={course.id}
@@ -363,13 +379,23 @@ export function App() {
                         <div className="h-48 bg-muted flex items-center justify-center">
                           <BookOpen className="w-12 h-12 text-muted-foreground" />
                         </div>
-                        <div className="absolute top-3 right-3 bg-secondary text-secondary-foreground px-2 py-1 rounded text-xs">
-                          {course.level}
+                        <div className="absolute top-3 right-3">
+                          <Badge
+                            variant={
+                              course.level === 'beginner'
+                                ? 'default'
+                                : course.level === 'intermediate'
+                                  ? 'secondary'
+                                  : 'destructive'
+                            }
+                          >
+                            {course.level}
+                          </Badge>
                         </div>
                       </div>
 
-                      <CardContent className="p-6 space-y-4">
-                        <div className="space-y-2">
+                      <CardContent>
+                        <div className="flex flex-col gap-2">
                           <CardTitle className="text-lg line-clamp-2">
                             {course.title}
                           </CardTitle>
@@ -378,16 +404,53 @@ export function App() {
                           </CardDescription>
                         </div>
 
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span>{course.instructor}</span>
+                        <div className="flex items-center gap-4">
+                          <Avatar className="w-8 h-8">
+                            <AvatarImage src={`/api/placeholder/32/32`} />
+                            <AvatarFallback>
+                              <User className="w-4 h-4" />
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">
+                              {course.instructor}
+                            </p>
+                            <div className="flex items-center gap-6 text-xs text-muted-foreground">
+                              <div className="flex items-center gap-1">
+                                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                                <span>{course.rating}</span>
+                                <span>({course.totalRatings})</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Users className="w-3 h-3" />
+                                <span>
+                                  {course.totalStudents.toLocaleString()}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                <span>{course.duration}h</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span>{course.duration} hours</span>
+                        <div className="flex flex-wrap gap-2">
+                          {course.tags.slice(0, 3).map((tag) => (
+                            <Badge
+                              key={tag}
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
                         </div>
 
-                        <div className="flex items-center justify-between pt-2">
-                          <div className="space-y-1">
+                        <Separator />
+
+                        <div className="flex items-center justify-between pt-4">
+                          <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
                               <span className="text-2xl font-bold">
                                 ${course.price}
