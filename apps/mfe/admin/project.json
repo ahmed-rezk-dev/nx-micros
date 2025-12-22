@@ -1,0 +1,48 @@
+{
+  "name": "admin",
+  "sourceRoot": "apps/mfe/admin/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "apps/mfe/admin/dist",
+        "main": "apps/mfe/admin/src/main.ts",
+        "tsConfig": "apps/mfe/admin/tsconfig.app.json",
+        "webpackConfig": "apps/mfe/admin/webpack.config.ts"
+      },
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true
+        },
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "sourceMap": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "admin:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "admin:build:development"
+        },
+        "production": {
+          "buildTarget": "admin:build:production",
+          "hmr": false
+        }
+      }
+    }
+  },
+  "tags": ["scope:admin", "type:app"]
+}

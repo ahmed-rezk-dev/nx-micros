@@ -13,6 +13,8 @@ import { useAuth } from '../stores';
 
 const Account = React.lazy(() => import('account/Module'));
 
+const Admin = React.lazy(() => import('admin/Module'));
+
 const Instructor = React.lazy(() => import('instructor/Module'));
 
 const Learning = React.lazy(() => import('learning/Module'));
@@ -88,6 +90,9 @@ export function App() {
                         </Button>
                         <Button asChild variant="ghost">
                           <Link to="/subscription">Subscription</Link>
+                        </Button>
+                        <Button asChild variant="ghost">
+                          <Link to="/admin">Admin</Link>
                         </Button>
                         <div className="flex items-center gap-2 ml-4 pl-4 border-l">
                           <span className="text-sm text-gray-600">
@@ -219,6 +224,14 @@ export function App() {
                   element={
                     <ProtectedRoute>
                       <SubscriptionPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute>
+                      <Admin />
                     </ProtectedRoute>
                   }
                 />
