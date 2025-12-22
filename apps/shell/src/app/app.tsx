@@ -11,9 +11,9 @@ import {
 import { ErrorBoundary, ToastProvider, ToastContainer } from '@nx-micros/ui';
 import { useAuth } from '../stores';
 
-const Account = React.lazy(() => import('account/Module'));
-
 const Admin = React.lazy(() => import('admin/Module'));
+
+const Account = React.lazy(() => import('account/Module'));
 
 const Instructor = React.lazy(() => import('instructor/Module'));
 
@@ -67,9 +67,14 @@ export function App() {
                     Nx Microfrontends
                   </h1>
                   <nav className="flex-col gap-4 items-center">
-                    <Button asChild variant="ghost">
-                      <Link to="/">Home</Link>
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button asChild variant="ghost">
+                        <Link to="/">Home</Link>
+                      </Button>
+                      <Button asChild variant="ghost">
+                        <Link to="/admin">Admin</Link>
+                      </Button>
+                    </div>
 
                     {isAuthenticated ? (
                       <>
@@ -91,9 +96,7 @@ export function App() {
                         <Button asChild variant="ghost">
                           <Link to="/subscription">Subscription</Link>
                         </Button>
-                        <Button asChild variant="ghost">
-                          <Link to="/admin">Admin</Link>
-                        </Button>
+
                         <div className="flex items-center gap-2 ml-4 pl-4 border-l">
                           <span className="text-sm text-gray-600">
                             Welcome, {user?.firstName || user?.email}
@@ -171,6 +174,7 @@ export function App() {
                     </div>
                   }
                 />
+                <Route path="/admin" element={<Admin />} />
                 <Route
                   path="/auth"
                   element={
@@ -224,14 +228,6 @@ export function App() {
                   element={
                     <ProtectedRoute>
                       <SubscriptionPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute>
-                      <Admin />
                     </ProtectedRoute>
                   }
                 />

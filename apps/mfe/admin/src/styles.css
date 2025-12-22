@@ -1,4 +1,1 @@
-/* Import shared centralized styles from UI package */
-@import '@nx-micros/ui/globals.css';
-
-/* Auth-specific styles can be added here */
+/* You can add global styles to this file, and also import other style files */

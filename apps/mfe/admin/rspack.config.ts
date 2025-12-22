@@ -9,12 +9,25 @@ import { join } from 'path';
 import config from './module-federation.config';
 
 export default {
+  entry: {
+    main: './src/main.ts',
+  },
   output: {
     path: join(__dirname, 'dist'),
     publicPath: 'auto',
   },
+  resolve: {
+    alias: {
+      '@': join(__dirname, '../../../packages/ui/src'),
+      '@/lib/utils': join(__dirname, '../../../packages/ui/src/lib/utils'),
+      '@/components/ui': join(
+        __dirname,
+        '../../../packages/ui/src/components/ui',
+      ),
+    },
+  },
   devServer: {
-    port: 4201,
+    port: 4207,
     headers: {
       'Access-Control-Allow-Origin': '*',
     },

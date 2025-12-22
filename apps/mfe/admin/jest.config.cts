@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'auth',
+  displayName: 'admin',
   preset: '../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',

@@ -6,17 +6,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@nx-micros/ui';
-import { Button } from '@nx-micros/ui';
+} from '../ui/dialog';
+import { Button } from '../atoms/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@nx-micros/ui';
-import { Badge } from '@nx-micros/ui';
-import { Separator } from '@nx-micros/ui';
+} from './card';
+import { Badge } from '../ui/badge';
+import { Separator } from '../ui/separator';
 import { CreditCard, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 export interface SubscriptionPlan {
@@ -60,8 +60,8 @@ export function PaymentDialog({
 
       setPaymentStatus('success');
       onPaymentSuccess?.(planType);
-    } catch (error: any) {
-      const message = error.message || 'Payment failed';
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Payment failed';
       setPaymentStatus('error');
       setErrorMessage(message);
       onPaymentError?.(message);

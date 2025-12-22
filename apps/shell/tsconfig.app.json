@@ -43,6 +43,9 @@
       "path": "../../packages/ui/tsconfig.lib.json"
     },
     {
+      "path": "../mfe/admin/tsconfig.app.json"
+    },
+    {
       "path": "../../account/tsconfig.app.json"
     },
     {

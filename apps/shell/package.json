@@ -27,6 +27,7 @@
     "courses": "*",
     "learning": "*",
     "instructor": "*",
-    "account": "*"
+    "account": "*",
+    "admin": "*"
   }
 }

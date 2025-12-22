@@ -28,6 +28,7 @@ const config: ModuleFederationConfig = {
     'learning',
     'instructor',
     'account',
+    'admin',
   ],
   shared: (libraryName: string) => {
     // Share common libraries as singletons to prevent duplication

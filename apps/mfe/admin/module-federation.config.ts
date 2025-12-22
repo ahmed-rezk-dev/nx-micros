@@ -3,26 +3,7 @@ import { ModuleFederationConfig } from '@nx/module-federation';
 const config: ModuleFederationConfig = {
   name: 'admin',
   exposes: {
-    './Module': './src/app/Module.tsx',
-  },
-  remotes: ['shell'],
-  shared: (libraryName: string) => {
-    // Share common libraries as singletons to prevent duplication
-    if (libraryName === 'react' || libraryName === 'react-dom') {
-      return {
-        singleton: true,
-        eager: true,
-      };
-    }
-    // Explicitly share @hookform/resolvers with correct version
-    if (libraryName === '@hookform/resolvers') {
-      return {
-        singleton: true,
-        eager: true,
-        requiredVersion: '^5.2.2',
-      };
-    }
-    return false;
+    './Module': './src/remote-entry.ts',
   },
 };
 

@@ -4,14 +4,14 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
+      "executor": "@nx/rspack:rspack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "apps/mfe/admin/dist",
         "main": "apps/mfe/admin/src/main.ts",
         "tsConfig": "apps/mfe/admin/tsconfig.app.json",
-        "webpackConfig": "apps/mfe/admin/webpack.config.ts"
+        "rspackConfig": "apps/mfe/admin/rspack.config.ts"
       },
       "configurations": {
         "development": {
@@ -20,17 +20,18 @@
           "sourceMap": true
         },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
+          "optimization": false,
+          "extractLicenses": false,
           "sourceMap": false
         }
       }
     },
     "serve": {
-      "executor": "@nx/webpack:dev-server",
+      "executor": "@nx/rspack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "admin:build",
+        "port": 4207,
         "hmr": true
       },
       "configurations": {
