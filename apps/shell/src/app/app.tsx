@@ -23,6 +23,10 @@ const Dashboard = React.lazy(() => import('dashboard/Module'));
 
 const Auth = React.lazy(() => import('auth/Module'));
 
+const SubscriptionPage = React.lazy(
+  () => import('./components/SubscriptionPage'),
+);
+
 // Protected Route component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -81,6 +85,9 @@ export function App() {
                         </Button>
                         <Button asChild variant="ghost">
                           <Link to="/account">Account</Link>
+                        </Button>
+                        <Button asChild variant="ghost">
+                          <Link to="/subscription">Subscription</Link>
                         </Button>
                         <div className="flex items-center gap-2 ml-4 pl-4 border-l">
                           <span className="text-sm text-gray-600">
@@ -204,6 +211,14 @@ export function App() {
                   element={
                     <ProtectedRoute>
                       <Account />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/subscription"
+                  element={
+                    <ProtectedRoute>
+                      <SubscriptionPage />
                     </ProtectedRoute>
                   }
                 />
