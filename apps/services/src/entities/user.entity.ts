@@ -38,6 +38,9 @@ export class User {
   @Column({ name: 'email_verified', default: false })
   emailVerified!: boolean;
 
+  @Column({ name: 'stripe_customer_id', nullable: true })
+  stripeCustomerId?: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 

@@ -377,4 +377,83 @@ export class SubscriptionService {
       );
     }
   }
+
+  async getUserById(userId: string): Promise<any> {
+    return this.userRepository.findOne({ where: { id: userId } });
+  }
+
+  async updateUserStripeCustomerId(
+    userId: string,
+    stripeCustomerId: string,
+  ): Promise<void> {
+    await this.userRepository.update(userId, { stripeCustomerId });
+  }
+
+  async updateSubscriptionWithStripeId(
+    subscriptionId: string,
+    stripeSubscriptionId: string,
+  ): Promise<void> {
+    await this.subscriptionRepository.update(subscriptionId, {
+      stripeSubscriptionId,
+    });
+  }
+
+  async handlePaymentSucceeded(
+    subscriptionId: string,
+    paymentDate: Date,
+  ): Promise<void> {
+    const subscription = await this.subscriptionRepository.findOne({
+      where: { id: subscriptionId },
+    });
+
+    if (subscription) {
+      subscription.status = SubscriptionStatus.ACTIVE;
+      subscription.lastPaymentDate = paymentDate;
+      await this.subscriptionRepository.save(subscription);
+
+      // Invalidate cache
+      await this.cacheService.delete(
+        `user:${subscription.userId}:subscription`,
+      );
+    }
+  }
+
+  async handleInvoicePaymentSucceeded(
+    stripeSubscriptionId: string,
+    paymentDate: Date,
+  ): Promise<void> {
+    const subscription = await this.subscriptionRepository.findOne({
+      where: { stripeSubscriptionId },
+    });
+
+    if (subscription) {
+      subscription.lastPaymentDate = paymentDate;
+      await this.subscriptionRepository.save(subscription);
+
+      // Invalidate cache
+      await this.cacheService.delete(
+        `user:${subscription.userId}:subscription`,
+      );
+    }
+  }
+
+  async handleStripeSubscriptionCancelled(
+    stripeSubscriptionId: string,
+    cancelledAt: Date,
+  ): Promise<void> {
+    const subscription = await this.subscriptionRepository.findOne({
+      where: { stripeSubscriptionId },
+    });
+
+    if (subscription) {
+      subscription.status = SubscriptionStatus.CANCELLED;
+      subscription.autoRenew = false;
+      await this.subscriptionRepository.save(subscription);
+
+      // Invalidate cache
+      await this.cacheService.delete(
+        `user:${subscription.userId}:subscription`,
+      );
+    }
+  }
 }

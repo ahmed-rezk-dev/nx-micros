@@ -85,5 +85,13 @@ export { default as ErrorBoundary } from './components/organisms/ErrorBoundary';
 export { ToastProvider, useToast } from './components/organisms/ToastProvider';
 export { ToastContainer } from './components/organisms/ToastContainer';
 
+export {
+  PaymentDialog,
+  SubscriptionPlans,
+  type SubscriptionPlan,
+  type PaymentDialogProps,
+  type SubscriptionPlansProps,
+} from './components/molecules/payment';
+
 // Utils
 export * from './lib/utils';

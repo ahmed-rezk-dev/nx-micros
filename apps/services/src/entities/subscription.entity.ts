@@ -62,6 +62,9 @@ export class Subscription {
   @Column({ name: 'payment_method', nullable: true })
   paymentMethod?: string;
 
+  @Column({ name: 'stripe_subscription_id', nullable: true })
+  stripeSubscriptionId?: string;
+
   @Column({ name: 'last_payment_date', type: 'timestamp', nullable: true })
   lastPaymentDate?: Date;
 
